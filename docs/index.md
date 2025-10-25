@@ -310,8 +310,8 @@ them
 *Describe how users interact with each component, especially CLI prompts, flags, or web UI behavior.*
 
 - **CLI**:
-  - `probe run <file>` - Execute single test file
-  - `probe run <directory>` - Execute all .probe files in directory
+  - `probe -f <file>` - Execute single test file
+  - `probe -d <directory>` - Execute all .probe files in directory
   - `--verbose` - Show full request/response details
   - `--env <file>` - Load environment variables
   - Exit code 0 for pass, non-zero for failures (CI-friendly)
