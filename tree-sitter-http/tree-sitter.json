@@ -1,0 +1,39 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "http",
+      "camelcase": "HTTP",
+      "title": "HTTP",
+      "scope": "source.http",
+      "file-types": [
+        "http"
+      ],
+      "injection-regex": "^http$",
+      "class-name": "TreeSitterHttp"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Parser for HTTP syntax specified in https://datatracker.ietf.org/doc/html/rfc9110",
+    "authors": [
+      {
+        "name": "Charuka Karunanayake",
+        "email": "charukakarunanayake@gmail.com"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/CharukaK/probe"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
