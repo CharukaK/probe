@@ -11,7 +11,38 @@ module.exports = grammar({
   name: "http",
 
   rules: {
-    // TODO: add the actual grammar rules
-    source_file: $ => "hello"
+    _line_ending: _ => choice('\r\n', '\n'),
+    _WS: _ => ' ',
+    http_version: _ => seq(
+      'HTTP/',
+      field('major', /[0-9]/),
+      '.',
+      field('minor', /[0-9]/)
+    ),
+    method: _ => choice(
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "PATCH",
+      "HEAD",
+      "OPTIONS",
+      "CONNECT",
+      "TRACE"
+    ),
+    request_target: _ => /[!-~]+/, // capture the token
+    request_line: $ => seq(
+      field('method', $.method),
+      $._WS,
+      field('target', $.request_target),
+      optional(
+        seq(
+          $._WS,
+          field('version', $.http_version)
+        )
+      ),
+      $._line_ending
+    ),
+    source_file: _ => "hello",
   }
 });
