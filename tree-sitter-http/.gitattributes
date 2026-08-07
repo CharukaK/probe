@@ -1,5 +1,10 @@
 * text=auto eol=lf
 
+# Corpus tests embed literal CRLF/LF bytes as test payloads (not just as the
+# file's own line-ending style) -- exempt them from normalization so git
+# doesn't silently rewrite \r\n test cases to \n.
+test/corpus/*.txt -text
+
 # Generated source files
 src/*.json linguist-generated
 src/parser.c linguist-generated

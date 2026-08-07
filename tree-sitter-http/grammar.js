@@ -9,40 +9,44 @@
 
 module.exports = grammar({
   name: "http",
-
+  extras: _ => [],
   rules: {
+    source_file: $ => $.request_line,
     _line_ending: _ => choice('\r\n', '\n'),
-    _WS: _ => ' ',
-    http_version: _ => seq(
+    _SP: _ => ' ',
+    _OWS: _ => /[ \t]*/,
+    digit: _ => /[0-9]/,
+    http_version: $ => seq(
       'HTTP/',
-      field('major', /[0-9]/),
+      field('major', $.digit),
       '.',
-      field('minor', /[0-9]/)
+      field('minor', $.digit)
     ),
-    method: _ => choice(
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE",
-      "PATCH",
-      "HEAD",
-      "OPTIONS",
-      "CONNECT",
-      "TRACE"
-    ),
+    method: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
+    field_name: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
+    field_value: _ => /[!-~]+(?:[ \t]+[!-~]+)*/,
+    field_value_seperator: _ => ':',
     request_target: _ => /[!-~]+/, // capture the token
     request_line: $ => seq(
       field('method', $.method),
-      $._WS,
+      $._SP,
       field('target', $.request_target),
       optional(
         seq(
-          $._WS,
+          $._SP,
           field('version', $.http_version)
         )
       ),
       $._line_ending
     ),
-    source_file: _ => "hello",
+    field_line: $ => seq(
+      field('name', $.field_name),
+      $.field_value_seperator,
+      $._OWS,
+      field('value', $.field_value),
+      $.field_value_seperator,
+      $._OWS,
+      $._line_ending
+    )
   }
 });
