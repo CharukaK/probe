@@ -23,6 +23,10 @@
       "type": "PATTERN",
       "value": "[ \\t]"
     },
+    "_octet": {
+      "type": "PATTERN",
+      "value": "[\\s\\S]"
+    },
     "digit": {
       "type": "PATTERN",
       "value": "[0-9]"
@@ -173,6 +177,24 @@
         }
       ]
     },
+    "request_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_octet"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
     "request_block": {
       "type": "SEQ",
       "members": [
@@ -189,6 +211,27 @@
                 "type": "SYMBOL",
                 "name": "field_line"
               }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_line_ending"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "request_body"
+                }
+              ]
             },
             {
               "type": "BLANK"

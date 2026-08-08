@@ -84,11 +84,20 @@
           "named": true
         },
         {
+          "type": "request_body",
+          "named": true
+        },
+        {
           "type": "request_line",
           "named": true
         }
       ]
     }
+  },
+  {
+    "type": "request_body",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "request_line",

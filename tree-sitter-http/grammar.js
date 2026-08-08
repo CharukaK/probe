@@ -14,6 +14,7 @@ module.exports = grammar({
     source_file: $ => $.request_block,
     _line_ending: _ => choice('\r\n', '\n'),
     _wsp: _ => /[ \t]/,
+    _octet: _ => /[\s\S]/,
     digit: _ => /[0-9]/,
     http_version: $ => seq(
       'HTTP/',
@@ -46,9 +47,19 @@ module.exports = grammar({
       repeat($._wsp),
       $._line_ending
     ),
+    request_body: $ => seq(
+      choice($._octet),
+      $._line_ending
+    ),
     request_block: $ => seq(
       $.request_line,
-      optional(repeat($.field_line))
+      optional(repeat($.field_line)),
+      optional(
+        seq(
+          $._line_ending,
+          $.request_body,
+        )
+      ),
     )
   }
 });
