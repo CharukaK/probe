@@ -11,7 +11,7 @@ module.exports = grammar({
   name: "http",
   extras: _ => [],
   rules: {
-    source_file: $ => $.request,
+    source_file: $ => $.request_block,
     _line_ending: _ => choice('\r\n', '\n'),
     _wsp: _ => /[ \t]/,
     digit: _ => /[0-9]/,
@@ -46,7 +46,7 @@ module.exports = grammar({
       repeat($._wsp),
       $._line_ending
     ),
-    request: $ => seq(
+    request_block: $ => seq(
       $.request_line,
       optional(repeat($.field_line))
     )

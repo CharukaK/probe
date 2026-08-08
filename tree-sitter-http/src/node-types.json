@@ -72,7 +72,7 @@
     "fields": {}
   },
   {
-    "type": "request",
+    "type": "request_block",
     "named": true,
     "fields": {},
     "children": {
@@ -136,7 +136,7 @@
       "required": true,
       "types": [
         {
-          "type": "request",
+          "type": "request_block",
           "named": true
         }
       ]

@@ -4,7 +4,7 @@
   "rules": {
     "source_file": {
       "type": "SYMBOL",
-      "name": "request"
+      "name": "request_block"
     },
     "_line_ending": {
       "type": "CHOICE",
@@ -173,7 +173,7 @@
         }
       ]
     },
-    "request": {
+    "request_block": {
       "type": "SEQ",
       "members": [
         {

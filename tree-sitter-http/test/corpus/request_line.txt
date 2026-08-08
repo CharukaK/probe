@@ -6,7 +6,7 @@ GET /
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
         method: (method)
         target: (request_target))))
@@ -19,7 +19,7 @@ GET /
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
       method: (method)
       target: (request_target))))
@@ -33,7 +33,7 @@ GET / HTTP/1.1
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
       method: (method)
       target: (request_target)
@@ -50,7 +50,7 @@ GET /a/b?x=1&y=2 HTTP/1.1
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
       method: (method)
       target: (request_target)
@@ -66,7 +66,7 @@ OPTIONS * HTTP/1.1
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
       method: (method)
       target: (request_target)
@@ -82,7 +82,7 @@ GET http://example.com/path HTTP/1.1
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
       method: (method)
       target: (request_target)
@@ -98,7 +98,7 @@ M-SEARCH * HTTP/1.1
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
       method: (method)
       target: (request_target)
@@ -114,7 +114,7 @@ GET / HTTP/0.9
 ---
 
 (source_file
-  (request
+  (request_block
     (request_line
       method: (method)
       target: (request_target)
