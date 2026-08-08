@@ -11,10 +11,9 @@ module.exports = grammar({
   name: "http",
   extras: _ => [],
   rules: {
-    source_file: $ => $.request_line,
+    source_file: $ => $.request,
     _line_ending: _ => choice('\r\n', '\n'),
-    _SP: _ => ' ',
-    _OWS: _ => /[ \t]*/,
+    _wsp: _ => /[ \t]/,
     digit: _ => /[0-9]/,
     http_version: $ => seq(
       'HTTP/',
@@ -29,11 +28,11 @@ module.exports = grammar({
     request_target: _ => /[!-~]+/, // capture the token
     request_line: $ => seq(
       field('method', $.method),
-      $._SP,
+      $._wsp,
       field('target', $.request_target),
       optional(
         seq(
-          $._SP,
+          $._wsp,
           field('version', $.http_version)
         )
       ),
@@ -42,11 +41,14 @@ module.exports = grammar({
     field_line: $ => seq(
       field('name', $.field_name),
       $.field_value_seperator,
-      $._OWS,
+      repeat($._wsp),
       field('value', $.field_value),
-      $.field_value_seperator,
-      $._OWS,
+      repeat($._wsp),
       $._line_ending
+    ),
+    request: $ => seq(
+      $.request_line,
+      optional(repeat($.field_line))
     )
   }
 });

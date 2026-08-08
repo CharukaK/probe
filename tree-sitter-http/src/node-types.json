@@ -1,5 +1,46 @@
 [
   {
+    "type": "field_line",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_name",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_value",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_value_seperator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "field_name",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "http_version",
     "named": true,
     "fields": {
@@ -23,6 +64,30 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "method",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "request",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "field_line",
+          "named": true
+        },
+        {
+          "type": "request_line",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -71,7 +136,7 @@
       "required": true,
       "types": [
         {
-          "type": "request_line",
+          "type": "request",
           "named": true
         }
       ]
@@ -83,10 +148,6 @@
   },
   {
     "type": "\r\n",
-    "named": false
-  },
-  {
-    "type": " ",
     "named": false
   },
   {
@@ -102,7 +163,11 @@
     "named": true
   },
   {
-    "type": "method",
+    "type": "field_value",
+    "named": true
+  },
+  {
+    "type": "field_value_seperator",
     "named": true
   },
   {

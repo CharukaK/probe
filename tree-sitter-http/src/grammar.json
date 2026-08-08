@@ -4,7 +4,7 @@
   "rules": {
     "source_file": {
       "type": "SYMBOL",
-      "name": "request_line"
+      "name": "request"
     },
     "_line_ending": {
       "type": "CHOICE",
@@ -19,13 +19,9 @@
         }
       ]
     },
-    "_SP": {
-      "type": "STRING",
-      "value": " "
-    },
-    "_OWS": {
+    "_wsp": {
       "type": "PATTERN",
-      "value": "[ \\t]*"
+      "value": "[ \\t]"
     },
     "digit": {
       "type": "PATTERN",
@@ -93,7 +89,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_SP"
+          "name": "_wsp"
         },
         {
           "type": "FIELD",
@@ -111,7 +107,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_SP"
+                  "name": "_wsp"
                 },
                 {
                   "type": "FIELD",
@@ -150,8 +146,11 @@
           "name": "field_value_seperator"
         },
         {
-          "type": "SYMBOL",
-          "name": "_OWS"
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_wsp"
+          }
         },
         {
           "type": "FIELD",
@@ -162,16 +161,39 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "field_value_seperator"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_OWS"
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_wsp"
+          }
         },
         {
           "type": "SYMBOL",
           "name": "_line_ending"
+        }
+      ]
+    },
+    "request": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "request_line"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "field_line"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     }
