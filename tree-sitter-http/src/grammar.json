@@ -31,6 +31,26 @@
       "type": "PATTERN",
       "value": "[0-9]"
     },
+    "method": {
+      "type": "PATTERN",
+      "value": "[!#$%&'*+\\-.^_`|~0-9A-Za-z]+"
+    },
+    "request_target": {
+      "type": "PATTERN",
+      "value": "[!-~]+"
+    },
+    "field_name": {
+      "type": "PATTERN",
+      "value": "[!#$%&'*+\\-.^_`|~0-9A-Za-z]+"
+    },
+    "field_value": {
+      "type": "PATTERN",
+      "value": "[!-~]+(?:[ \\t]+[!-~]+)*"
+    },
+    "field_value_seperator": {
+      "type": "STRING",
+      "value": ":"
+    },
     "http_version": {
       "type": "SEQ",
       "members": [
@@ -59,26 +79,6 @@
           }
         }
       ]
-    },
-    "method": {
-      "type": "PATTERN",
-      "value": "[!#$%&'*+\\-.^_`|~0-9A-Za-z]+"
-    },
-    "field_name": {
-      "type": "PATTERN",
-      "value": "[!#$%&'*+\\-.^_`|~0-9A-Za-z]+"
-    },
-    "field_value": {
-      "type": "PATTERN",
-      "value": "[!-~]+(?:[ \\t]+[!-~]+)*"
-    },
-    "field_value_seperator": {
-      "type": "STRING",
-      "value": ":"
-    },
-    "request_target": {
-      "type": "PATTERN",
-      "value": "[!-~]+"
     },
     "request_line": {
       "type": "SEQ",

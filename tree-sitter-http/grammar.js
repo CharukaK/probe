@@ -11,22 +11,30 @@ module.exports = grammar({
   name: "http",
   extras: _ => [],
   rules: {
+    // --- Entry point ---
     source_file: $ => $.request_block,
+
+    // --- Low-level primitives ---
     _line_ending: _ => choice('\r\n', '\n'),
     _wsp: _ => /[ \t]/,
     _octet: _ => /[\s\S]/,
     digit: _ => /[0-9]/,
+
+    // --- Lexical tokens ---
+    method: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
+    request_target: _ => /[!-~]+/, // capture the token
+    field_name: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
+    field_value: _ => /[!-~]+(?:[ \t]+[!-~]+)*/,
+    field_value_seperator: _ => ':',
+
     http_version: $ => seq(
       'HTTP/',
       field('major', $.digit),
       '.',
       field('minor', $.digit)
     ),
-    method: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    field_name: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    field_value: _ => /[!-~]+(?:[ \t]+[!-~]+)*/,
-    field_value_seperator: _ => ':',
-    request_target: _ => /[!-~]+/, // capture the token
+
+    // --- Structural / composite rules ---
     request_line: $ => seq(
       field('method', $.method),
       $._wsp,
@@ -39,6 +47,7 @@ module.exports = grammar({
       ),
       $._line_ending
     ),
+
     field_line: $ => seq(
       field('name', $.field_name),
       $.field_value_seperator,
@@ -47,10 +56,12 @@ module.exports = grammar({
       repeat($._wsp),
       $._line_ending
     ),
+
     request_body: $ => seq(
       choice($._octet),
       $._line_ending
     ),
+
     request_block: $ => seq(
       $.request_line,
       optional(repeat($.field_line)),
