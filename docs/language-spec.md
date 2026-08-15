@@ -1,9 +1,8 @@
 # 📐 Probe Language Specification (v0.3 — Draft)
 
 *Companion to the [PRD](./index.md) and the [Roadmap](./roadmap.md). This is
-the formal reference for the `.probe` file format: what M1 (HTTP-syntax base)
-and M2 (Probe extensions) — both implemented in `tree-sitter-probe` — must
-implement.*
+the formal reference for the `.probe` file format: both its base HTTP syntax
+and its Probe-specific extensions.*
 
 Status: **Draft, v1 scope only.** Not yet implemented. Control flow
 (loops/conditionals) is explicitly deferred — see §11.
@@ -12,8 +11,8 @@ Status: **Draft, v1 scope only.** Not yet implemented. Control flow
 / file-upload bodies (§4.4), teardown blocks (§5.1), expanded `@assert`
 comparators for length/existence/schema (§7.1), and the `probe.toml` project
 configuration file (§13). These were identified as grammar-affecting gaps
-that needed resolving before the M2 layering decision — see
-[roadmap §7](./roadmap.md#7-future-considerations-not-yet-scoped) for the
+that needed resolving before the Probe-extensions layer could be finalized —
+see [roadmap §7](./roadmap.md#7-future-considerations-not-yet-scoped) for the
 broader list of deferred, non-grammar items tracked alongside these.
 
 **v0.3 changes**: `@use ... as <alias>` (§7.3) — namespaced imports, closing
@@ -607,8 +606,8 @@ makes `{{token}}` available — no separate invocation needed.
 ## 12. Versioning
 
 This document versions independently of the PRD. Breaking grammar changes
-bump the major/minor version in the title; the implementing grammar
-(`tree-sitter-probe`, covering both the M1 HTTP-syntax base and M2 Probe
+bump the major/minor version in the title; any implementation of this
+grammar (covering both the base HTTP syntax and the Probe-specific
 extensions) should track which spec version it implements. `probe.toml`
 (§13) is a companion file format, not part of the `.probe` grammar itself,
 and versions independently — see §13.
