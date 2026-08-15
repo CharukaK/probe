@@ -64,11 +64,6 @@ module.exports = grammar({
       $._line_ending
     ),
 
-    request_body: $ => seq(
-      choice($._octet),
-      $._line_ending
-    ),
-
     request_block: $ => seq(
       $.request_line,
       repeat($.field_line),

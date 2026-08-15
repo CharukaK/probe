@@ -227,24 +227,6 @@
         }
       ]
     },
-    "request_body": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_octet"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_line_ending"
-        }
-      ]
-    },
     "request_block": {
       "type": "SEQ",
       "members": [
