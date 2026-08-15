@@ -1,0 +1,233 @@
+[
+  {
+    "type": "field_line",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_name",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_value",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_value_seperator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "field_name",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "http_version",
+    "named": true,
+    "fields": {
+      "major": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "digit",
+            "named": true
+          }
+        ]
+      },
+      "minor": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "digit",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "message_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "multipart_body",
+          "named": true
+        },
+        {
+          "type": "octet_body",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "method",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "multipart_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "multipart_part",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "multipart_part",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "octet_body",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "request_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "field_line",
+          "named": true
+        },
+        {
+          "type": "message_body",
+          "named": true
+        },
+        {
+          "type": "request_line",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "request_line",
+    "named": true,
+    "fields": {
+      "method": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "method",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "request_target",
+            "named": true
+          }
+        ]
+      },
+      "version": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "http_version",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "request_block",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "\n",
+    "named": false
+  },
+  {
+    "type": "\r\n",
+    "named": false
+  },
+  {
+    "type": ".",
+    "named": false
+  },
+  {
+    "type": "@field",
+    "named": false
+  },
+  {
+    "type": "@file",
+    "named": false
+  },
+  {
+    "type": "HTTP/",
+    "named": false
+  },
+  {
+    "type": "digit",
+    "named": true
+  },
+  {
+    "type": "field_value",
+    "named": true
+  },
+  {
+    "type": "field_value_seperator",
+    "named": true
+  },
+  {
+    "type": "request_target",
+    "named": true
+  }
+]

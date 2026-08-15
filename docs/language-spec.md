@@ -1,8 +1,9 @@
 # 📐 Probe Language Specification (v0.3 — Draft)
 
 *Companion to the [PRD](./index.md) and the [Roadmap](./roadmap.md). This is
-the formal reference for the `.probe` file format: what M1 (`tree-sitter-http`)
-and M2 (Probe extensions) grammars must implement.*
+the formal reference for the `.probe` file format: what M1 (HTTP-syntax base)
+and M2 (Probe extensions) — both implemented in `tree-sitter-probe` — must
+implement.*
 
 Status: **Draft, v1 scope only.** Not yet implemented. Control flow
 (loops/conditionals) is explicitly deferred — see §11.
@@ -607,9 +608,10 @@ makes `{{token}}` available — no separate invocation needed.
 
 This document versions independently of the PRD. Breaking grammar changes
 bump the major/minor version in the title; the implementing grammar
-(`tree-sitter-http`, and its Probe-layer successor) should track which spec
-version it implements. `probe.toml` (§13) is a companion file format, not
-part of the `.probe` grammar itself, and versions independently — see §13.
+(`tree-sitter-probe`, covering both the M1 HTTP-syntax base and M2 Probe
+extensions) should track which spec version it implements. `probe.toml`
+(§13) is a companion file format, not part of the `.probe` grammar itself,
+and versions independently — see §13.
 
 ## 13. Project Configuration File (`probe.toml`)
 

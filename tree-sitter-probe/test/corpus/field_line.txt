@@ -1,0 +1,165 @@
+=================================================================
+single header field, CRLF terminated
+=================================================================
+GET / HTTP/1.1
+Host: example.com
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))))
+
+=================================================================
+multiple header fields
+=================================================================
+GET / HTTP/1.1
+Host: example.com
+Accept: */*
+Connection: close
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))))
+
+=================================================================
+field value with internal whitespace runs
+=================================================================
+GET / HTTP/1.1
+User-Agent: My Client 1.0
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))))
+
+=================================================================
+leading and trailing optional whitespace (OWS) around field value
+=================================================================
+GET / HTTP/1.1
+Host:    example.com
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))))
+
+=================================================================
+field name with non-alphabetic tchars
+=================================================================
+GET / HTTP/1.1
+X-My-Header!#$: value
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))))
+
+=================================================================
+header field on a request-line without an HTTP version
+=================================================================
+GET /
+Host: example.com
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value))))
+
+=================================================================
+whitespace between field name and colon is an error
+:error
+=================================================================
+GET / HTTP/1.1
+Host : example.com
+
+---
+
+=================================================================
+missing colon after field name is an error
+:error
+=================================================================
+GET / HTTP/1.1
+Host example.com
+
+---
+
+=================================================================
+empty field value is an error
+:error
+=================================================================
+GET / HTTP/1.1
+Host:
+
+---

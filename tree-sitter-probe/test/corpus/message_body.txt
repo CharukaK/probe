@@ -1,0 +1,216 @@
+=================================================================
+octet_body: single-line plain text body
+=================================================================
+GET /
+
+hello world
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+octet_body: multi-line body
+=================================================================
+GET /
+
+line one
+line two
+line three
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+octet_body: body with no trailing line ending at EOF
+=================================================================
+GET /
+
+hello, no trailing newline
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+octet_body: a boundary marker mid-line is not a boundary
+=================================================================
+GET /
+
+see ### here
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+octet_body: a near-miss boundary marker (four hashes) is literal text
+=================================================================
+GET /
+
+####
+more text
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+octet_body: an unrecognized @-directive falls back to plain body text
+=================================================================
+GET /
+
+@feed not a real directive
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+message_body is optional: blank line followed directly by EOF
+=================================================================
+GET /
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+multipart_body: @field and @file parts
+=================================================================
+GET /
+
+@field username alice
+@file avatar ./avatar.png
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (multipart_body
+        (multipart_part)
+        (multipart_part)))))
+
+=================================================================
+multipart_body: a single @field part with an empty value
+=================================================================
+GET /
+
+@field
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (multipart_body
+        (multipart_part)))))
+
+=================================================================
+multipart_body: repeated @file parts
+=================================================================
+GET /
+
+@file a ./a.txt
+@file b ./b.txt
+@file c ./c.txt
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (multipart_body
+        (multipart_part)
+        (multipart_part)
+        (multipart_part)))))
+
+=================================================================
+plain body content immediately followed by a boundary marker is unparsed
+:error
+=================================================================
+GET /
+
+hello
+###
+
+---
+
+
+
+=================================================================
+plain body content immediately followed by a teardown marker is unparsed
+:error
+=================================================================
+GET /
+
+hello
+~~~
+
+---
+
+
+
+=================================================================
+plain body content immediately followed by an @assert directive is unparsed
+:error
+=================================================================
+GET /
+
+hello
+@assert status == 200
+
+---
+
+
