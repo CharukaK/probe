@@ -1,4 +1,4 @@
-module github.com/charukak/probe
+module github.com/charukak/probe/tree-sitter-probe
 
 go 1.23
 

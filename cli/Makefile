@@ -10,7 +10,7 @@ build:
 	$(GO) build -o build/$(BINARY) $(CMD_DIR)
 
 run: build
-	./$(BINARY)
+	./build/$(BINARY)
 
 test:
 	$(GO) test ./...
@@ -25,4 +25,4 @@ tidy:
 	$(GO) mod tidy
 
 clean:
-	$(RM) $(BINARY)
+	$(RM) build/$(BINARY)

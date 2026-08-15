@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	ts_probe "github.com/charukak/probe/bindings/go"
+	ts_probe "github.com/charukak/probe/tree-sitter-probe/bindings/go"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
 
