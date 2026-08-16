@@ -1,6 +1,6 @@
 GO ?= go
 BINARY := probe
-CMD_DIR := ./cmd
+CMD_DIR := ./cmd/probe
 
 .PHONY: all build run test vet fmt tidy clean
 
