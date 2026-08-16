@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/charukak/probe/cli/internal/command/run"
 	"github.com/spf13/cobra"
 )
@@ -13,7 +11,7 @@ var RootCmd = &cobra.Command{
 
 func main() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		return
 	}
 }
 

@@ -20,7 +20,7 @@ var RunCmd = &cobra.Command{
 
 		parser.SetLanguage(ts.NewLanguage(ts_probe.Language()))
 
-		source, err := os.ReadFile("./hello.probe")
+		source, err := os.ReadFile(args[0])
 
 		if err != nil {
 			return err
