@@ -9,8 +9,15 @@ import (
 	"github.com/charukak/probe/cli/internal/parser"
 )
 
-func BuildAndExec(sf *parser.SourceFile) error {
-	client := &http.Client{
+type Opts struct {
+	Verbose bool
+}
+
+func BuildAndExec(sf *parser.SourceFile, opts *Opts) error {
+	client := &http.Client{}
+
+	if opts.Verbose {
+		client.Transport = &verboseTransport{Base: http.DefaultTransport}
 	}
 
 	for _, r := range sf.Children {
