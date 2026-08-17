@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"strings"
+
 	ts_probe "github.com/charukak/probe/tree-sitter-probe/bindings/go"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -13,6 +15,13 @@ const (
 	RequestMethodKind    NodeKind = "method"
 	RequestTargetKind    NodeKind = "request_target"
 	RequestVersionKind   NodeKind = "http_version"
+	FieldLineKind        NodeKind = "field_line"
+	FieldNameKind        NodeKind = "field_name"
+	FieldValueKind       NodeKind = "field_value"
+	MessageBodyKind      NodeKind = "message_body"
+	OctetBodyKind        NodeKind = "octet_body"
+	MultipartBodyKind    NodeKind = "multipart_body"
+	MultipartPartKind    NodeKind = "multipart_part"
 )
 
 type SourceFile struct {
@@ -106,10 +115,96 @@ func walkRequestBlock(node *ts.Node, source []byte) *RequestBlock {
 			reqBlock.RequestLine.Method = reqLine.Method
 			reqBlock.RequestLine.Target = reqLine.Target
 			reqBlock.RequestLine.Version = reqLine.Version
+		case string(FieldLineKind):
+			headerLine := walkFieldLine(&child, source)
+			reqBlock.HeaderLines = append(reqBlock.HeaderLines, *headerLine)
+		case string(MessageBodyKind):
+			body := walkMessageBody(&child, source)
+			reqBlock.Body = *body
 		}
 	}
 
 	return reqBlock
+}
+
+func walkFieldLine(node *ts.Node, source []byte) *HeaderLine {
+	headerLine := &HeaderLine{}
+
+	cursor := node.Walk()
+	children := node.Children(cursor)
+
+	for _, child := range children {
+		switch child.Kind() {
+		case string(FieldNameKind):
+			headerLine.Key = child.Utf8Text(source)
+		case string(FieldValueKind):
+			headerLine.Value = child.Utf8Text(source)
+		}
+	}
+
+	return headerLine
+}
+
+func walkMessageBody(node *ts.Node, source []byte) *MessageBody {
+	body := &MessageBody{}
+
+	cursor := node.Walk()
+	children := node.Children(cursor)
+
+	for _, child := range children {
+		switch child.Kind() {
+		case string(OctetBodyKind):
+			body.Octets = []byte(child.Utf8Text(source))
+		case string(MultipartBodyKind):
+			body.MultipartEntries = walkMultipartBody(&child, source)
+		}
+	}
+
+	return body
+}
+
+func walkMultipartBody(node *ts.Node, source []byte) []MultipartEntry {
+	entries := make([]MultipartEntry, 0)
+
+	cursor := node.Walk()
+	children := node.Children(cursor)
+
+	for _, child := range children {
+		if child.Kind() != string(MultipartPartKind) {
+			continue
+		}
+		entries = append(entries, walkMultipartPart(&child, source))
+	}
+
+	return entries
+}
+
+// walkMultipartPart parses a raw multipart_part node, e.g. "@field username alice\r\n"
+// or "@file avatar ./avatar.png\n". The grammar doesn't split the directive keyword,
+// key, and value into separate fields, so that's done here from the raw text.
+func walkMultipartPart(node *ts.Node, source []byte) MultipartEntry {
+	entry := MultipartEntry{}
+
+	text := strings.TrimRight(node.Utf8Text(source), "\r\n")
+
+	switch {
+	case strings.HasPrefix(text, "@field"):
+		entry.EntryType = FieldType
+		text = strings.TrimPrefix(text, "@field")
+	case strings.HasPrefix(text, "@file"):
+		entry.EntryType = FileType
+		text = strings.TrimPrefix(text, "@file")
+	}
+
+	fields := strings.Fields(text)
+	if len(fields) > 0 {
+		entry.Key = fields[0]
+	}
+	if len(fields) > 1 {
+		entry.Value = strings.Join(fields[1:], " ")
+	}
+
+	return entry
 }
 
 func walkRequestLine(node *ts.Node, source []byte) *RequestLine {
