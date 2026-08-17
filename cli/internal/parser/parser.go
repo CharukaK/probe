@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-
 	ts_probe "github.com/charukak/probe/tree-sitter-probe/bindings/go"
 	ts "github.com/tree-sitter/go-tree-sitter"
 )
@@ -11,6 +9,10 @@ type NodeKind string
 
 const (
 	RequestBlockNodeKind NodeKind = "request_block"
+	RequestLineKind      NodeKind = "request_line"
+	RequestMethodKind    NodeKind = "method"
+	RequestTargetKind    NodeKind = "request_target"
+	RequestVersionKind   NodeKind = "http_version"
 )
 
 type SourceFile struct {
@@ -98,10 +100,34 @@ func walkRequestBlock(node *ts.Node, source []byte) *RequestBlock {
 	children := node.Children(cursor)
 
 	for _, child := range children {
-		fmt.Println(child.Kind())
+		switch child.Kind() {
+		case string(RequestLineKind):
+			reqLine := walkRequestLine(&child, source)
+			reqBlock.RequestLine.Method = reqLine.Method
+			reqBlock.RequestLine.Target = reqLine.Target
+			reqBlock.RequestLine.Version = reqLine.Version
+		}
 	}
-
 
 	return reqBlock
 }
 
+func walkRequestLine(node *ts.Node, source []byte) *RequestLine {
+	reqLine := &RequestLine{}
+
+	cursor := node.Walk()
+	children := node.Children(cursor)
+
+	for _, child := range children {
+		switch child.Kind() {
+		case string(RequestMethodKind):
+			reqLine.Method = child.Utf8Text(source)
+		case string(RequestTargetKind):
+			reqLine.Target = child.Utf8Text(source)
+		case string(RequestVersionKind):
+			reqLine.Version = child.Utf8Text(source)
+		}
+	}
+
+	return reqLine
+}
