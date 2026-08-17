@@ -37,7 +37,7 @@ func (t *verboseTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 		return nil, err
 	}
 
-	writePrefixed(os.Stdout, respDump, ">", colorReq)
+	writePrefixed(os.Stdout, respDump, "<", colorResp)
 
 	return resp, nil
 }
