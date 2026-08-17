@@ -1,14 +1,12 @@
 package run
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/charukak/probe/cli/internal/parser"
 	"github.com/charukak/probe/cli/internal/request"
 	"github.com/spf13/cobra"
 )
-
 
 var RunCmd = &cobra.Command{
 	Use:   "run <file-path>",
@@ -31,7 +29,6 @@ var RunCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println(fmt.Sprintf("%v", sourceFile))
 		err = request.BuildAndExec(sourceFile, &request.Opts{Verbose: verbose})
 
 		if err != nil {
