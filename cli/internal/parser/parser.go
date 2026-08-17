@@ -25,7 +25,7 @@ const (
 )
 
 type SourceFile struct {
-	children []RequestBlock
+	Children []RequestBlock
 }
 
 type RequestBlock struct {
@@ -88,14 +88,14 @@ func walkSourceFile(node *ts.Node, source []byte) *SourceFile {
 	cursor := node.Walk()
 	children := node.Children(cursor)
 	sf := &SourceFile{
-		children: make([]RequestBlock, 0),
+		Children: make([]RequestBlock, 0),
 	}
 
 	for _, child := range children {
 		switch child.Kind() {
 		case string(RequestBlockNodeKind):
 			requestBlock := walkRequestBlock(&child, source)
-			sf.children = append(sf.children, *requestBlock)
+			sf.Children = append(sf.Children, *requestBlock)
 		}
 	}
 

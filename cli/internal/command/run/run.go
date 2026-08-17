@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/charukak/probe/cli/internal/parser"
+	"github.com/charukak/probe/cli/internal/request"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +27,11 @@ var RunCmd = &cobra.Command{
 		}
 
 		fmt.Println(fmt.Sprintf("%v", sourceFile))
+		err = request.BuildAndExec(sourceFile)
+
+		if err != nil {
+			return err
+		}
 
 		return nil
 	},
