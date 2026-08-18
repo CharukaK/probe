@@ -2,7 +2,7 @@
 
 ![status: pre-alpha](https://img.shields.io/badge/status-pre--alpha-lightgrey)
 
-**A text-based API testing tool built on [RFC 9110](https://datatracker.ietf.org/doc/html/rfc9110) HTTP message syntax.**
+**A text-based API testing tool built on HTTP message syntax.**
 
 Requests are written as plain `.probe` files — a request line, headers, and
 a body, the same shape as a raw HTTP message. The CLI parses one, sends it
