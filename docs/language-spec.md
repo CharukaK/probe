@@ -1,21 +1,18 @@
-# 📐 Probe Language Specification (v0.3 — Draft)
+# Probe Language Specification (v0.3, Draft)
 
-*Companion to the [PRD](./index.md) and the [Roadmap](./roadmap.md). This is
-the formal reference for the `.probe` file format: both its base HTTP syntax
-and its Probe-specific extensions.*
+*This is the formal reference for the `.probe` file format: both its base
+HTTP syntax and its Probe-specific extensions.*
 
 Status: **Draft, v1 scope only.** Not yet implemented. Control flow
-(loops/conditionals) is explicitly deferred — see §11.
+(loops/conditionals) is explicitly deferred; see §11.
 
 **v0.2 changes**: added built-in functions to interpolation (§6), multipart
 / file-upload bodies (§4.4), teardown blocks (§5.1), expanded `@assert`
 comparators for length/existence/schema (§7.1), and the `probe.toml` project
 configuration file (§13). These were identified as grammar-affecting gaps
-that needed resolving before the Probe-extensions layer could be finalized —
-see [roadmap §7](./roadmap.md#7-future-considerations-not-yet-scoped) for the
-broader list of deferred, non-grammar items tracked alongside these.
+that needed resolving before the Probe-extensions layer could be finalized.
 
-**v0.3 changes**: `@use ... as <alias>` (§7.3) — namespaced imports, closing
+**v0.3 changes**: `@use ... as <alias>` (§7.3), namespaced imports that close
 a variable-shadowing hole in the flat import model v0.1–v0.2 shipped with
 (two `@use`d dependencies, or a dependency and its importer, saving the same
 identifier would silently overwrite one another with no error).
@@ -27,7 +24,7 @@ the same notation [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) uses.
 Core rules (`ALPHA`, `DIGIT`, `VCHAR`, `SP`, `HTAB`, `CRLF`, `OWS`) are as
 defined in RFC 5234 Appendix B.1 and RFC 9110 §5.6.3. Where a production is
 identical to one in RFC 9110, it's referenced by name rather than
-copied — e.g. `method`, `field-name`, `field-value` from RFC 9110 §9, §5.1,
+copied, e.g. `method`, `field-name`, `field-value` from RFC 9110 §9, §5.1,
 §5.5.
 
 ```abnf
@@ -35,19 +32,19 @@ line-ending = CRLF / LF   ; source files may use either; wire requests are
                           ; normalized to CRLF by the implementation
 ```
 
-## 2. File Structure Overview
+## 2. File structure overview
 
 ```abnf
 probe-file    = *blank-line [ *comment-line ] *use-directive request-block
                 *( *blank-line separator *blank-line request-block ) *blank-line
 request-block = *comment-line http-request *directive-line [ teardown-block ]
-blank-line    = line-ending   ; an empty line — carries no meaning here
+blank-line    = line-ending   ; an empty line, carries no meaning here
 ```
 
 A `.probe` file is one or more **request blocks**, each a plain RFC 9110
 HTTP request optionally preceded by comments and followed by Probe
 directive lines, separated by an explicit `###` delimiter. Blank lines
-around a `separator` are optional and insignificant — see §5. A file may
+around a `separator` are optional and insignificant; see §5. A file may
 also declare dependencies on other files via leading `@use` directives
 (§7.3) before its first request-block. A request-block may additionally
 carry its own **teardown block** (§5.1), run after it regardless of outcome.
@@ -60,32 +57,32 @@ comment-line = "#" *(VCHAR / SP / HTAB) line-ending
 
 - A comment is a line whose first non-whitespace character is `#`.
 - Comments are only valid **before the request-line** of a block (leading
-  comments) — not inside the header block or body, to avoid ambiguity with
+  comments), not inside the header block or body, to avoid ambiguity with
   RFC 9110 header-field syntax (which has no comment production). A `#` line
   found after the request-line but before the blank line that ends headers
   is a syntax error.
 
-## 4. Request Blocks
+## 4. Request blocks
 
-### 4.1 Request Line
+### 4.1 Request line
 
 ```abnf
 request-line   = method SP request-target [ SP HTTP-version ] line-ending
-method         = token           ; RFC 9110 §9.1 — any token, not just the
+method         = token           ; RFC 9110 §9.1, any token, not just the
                                   ; standard verbs, so extension methods parse
 request-target = absolute-form / interpolated-origin-form
 ```
 
 - `HTTP-version` is **optional**, unlike raw RFC 9110 (which requires it on
   the wire). If omitted, the implementation assumes `HTTP/1.1`. This is the
-  one deliberate deviation from RFC 9110 syntax — Probe files are a DSL over
+  one deliberate deviation from RFC 9110 syntax. Probe files are a DSL over
   HTTP, not a literal wire capture.
 - `request-target` is expected to be `absolute-form` (a full URL, RFC 9110
   §7.1) in the common case, since base hosts are typically supplied via
   `{{variable}}` interpolation (§6) rather than a separate `Host` line, e.g.
   `{{baseUrl}}/login`.
 
-### 4.2 Header Fields
+### 4.2 Header fields
 
 ```abnf
 header-block = *( field-line line-ending )
@@ -94,10 +91,10 @@ field-line   = field-name ":" OWS field-value OWS   ; RFC 9110 §5.1, §5.5
 
 Standard RFC 9110 header-field syntax, unmodified. `field-value` may contain
 `{{variable}}` interpolation tokens (§6), resolved before the request is
-sent — the grammar treats them as opaque text; substitution is a semantic
+sent. The grammar treats them as opaque text; substitution is a semantic
 (execution-time) concern, not a parse-time one.
 
-### 4.3 Message Body
+### 4.3 Message body
 
 ```abnf
 http-request = request-line header-block line-ending [ message-body ]
@@ -108,7 +105,7 @@ Standard RFC 9110 framing: a blank line ends the header block; everything
 after it, up to the next `@`-directive line, `###` separator, or EOF, is the
 body. Bodies may contain `{{variable}}` interpolation tokens.
 
-### 4.4 Multipart & File-Upload Bodies
+### 4.4 Multipart & file-upload bodies
 
 ```abnf
 multipart-body = 1*( multipart-part line-ending )
@@ -130,7 +127,7 @@ file-part      = "@file" SP identifier SP "=" SP quoted-path
   `Content-Type` explicitly; if omitted, it's inferred from the file
   extension.
 - A request whose `Content-Type` is not `multipart/form-data` keeps the
-  existing `message-body = *OCTET` framing (§4.3) — `@field`/`@file` lines
+  existing `message-body = *OCTET` framing (§4.3); `@field`/`@file` lines
   are only meaningful in a multipart body and are a syntax error elsewhere.
 
 ```
@@ -144,7 +141,7 @@ Authorization: Bearer {{token}}
 @assert status == 201
 ```
 
-## 5. Request Separators
+## 5. Request separators
 
 ```abnf
 separator = "###" [ 1*SP request-name ] line-ending
@@ -154,7 +151,7 @@ request-name = 1*(VCHAR / SP)
 - `###` on its own line starts a new request block. Text after `###` on the
   same line is that request's name (used in CLI/report output and as a
   reference target for future chaining features).
-- The **first** request block in a file has no leading `###` — the
+- The **first** request block in a file has no leading `###`. The
   separator is only needed *between* requests.
 - **No blank line is required** on either side of a `separator`. Both of
   these are valid and equivalent:
@@ -173,15 +170,12 @@ request-name = 1*(VCHAR / SP)
   POST {{baseUrl}}/users
   ```
 
-  Blank lines there are purely cosmetic (`blank-line` in §2) — write them or
+  Blank lines there are purely cosmetic (`blank-line` in §2); write them or
   not. The **one** blank line that is never optional is the one ending a
-  request's header block, per RFC 9110 framing (§4.3) — that's what
+  request's header block, per RFC 9110 framing (§4.3). That's what
   separates headers from the body, not what separates requests.
-- This supersedes the bare back-to-back example shown in the PRD (§7.2) —
-  that example predates this spec and should be read with an implicit
-  `###` between the two requests.
 
-### 5.1 Teardown Blocks
+### 5.1 Teardown blocks
 
 ```abnf
 teardown-block = teardown-sep *blank-line http-request *directive-line
@@ -194,16 +188,16 @@ teardown-sep   = "~~~" [ 1*SP request-name ] line-ending
   the same variable scope, so it can reference values the owning block
   `@save`d (e.g. an id to delete).
 - A teardown block runs once, immediately after its owning request-block
-  finishes — **regardless of whether that block's `@assert`s passed or
-  failed** — as long as the owning request was actually sent (an unresolved
+  finishes, **regardless of whether that block's `@assert`s passed or
+  failed**, as long as the owning request was actually sent (an unresolved
   `{{variable}}` that prevented sending skips the teardown too; there's
   nothing to tear down).
 - A teardown block's own `@assert` failures are reported as a **warning
-  attached to the owning request**, not as a separate failed test — a
+  attached to the owning request**, not as a separate failed test. A
   cleanup hiccup (e.g. the resource was already gone) shouldn't flip an
   otherwise-passing test to failed, but it must still be visible.
 - A request-block has at most one teardown block. Chaining cleanup steps is
-  out of scope for v1 — see §11.
+  out of scope for v1; see §11.
 
 ```
 POST {{baseUrl}}/users
@@ -221,7 +215,7 @@ Authorization: Bearer {{token}}
 @assert status == 204
 ```
 
-## 6. Variables & Interpolation
+## 6. Variables & interpolation
 
 ```abnf
 interpolation = "{{" *SP interp-expr *SP "}}"
@@ -235,14 +229,14 @@ fn-arg        = identifier / string / number
 `{{identifier}}` may appear anywhere in a request-target, header field-value,
 or message body. Dots in an `identifier` carry meaning in exactly one place:
 the `alias.name` form produced by an aliased `@use ... as alias` (§7.3).
-Everywhere else — including a bare identifier that happens to contain a dot
-because you named it that way — dots are just part of the name; there's no
+Everywhere else, including a bare identifier that happens to contain a dot
+because you named it that way, dots are just part of the name; there's no
 general dotted-path lookup into a variable's value (that's what `body.x.y`
 `assert-target` dot notation, §7.1, is for, and it's a separate grammar).
 
 `{{function-call()}}` computes a value at execution time instead of looking
 one up; arguments may themselves be `identifier`s (resolved per the order
-below before the function runs), not nested function calls — v1 keeps
+below before the function runs), not nested function calls. v1 keeps
 function calls non-composable to avoid needing a general expression grammar.
 Built-in v1 functions:
 
@@ -253,24 +247,23 @@ Built-in v1 functions:
 | `base64(value)` | `string` or identifier | Base64-encoded `value` |
 | `hmac_sha256(key, value)` | two `string`s or identifiers | Hex-encoded HMAC-SHA256, for signed-request headers |
 
-This set is deliberately small — covers the recurring "idempotency key /
-timestamp header / signed request" cases named in
-[roadmap §7](./roadmap.md#7-future-considerations-not-yet-scoped). Additional
-functions are additive (new `fn-name` alternatives), not breaking changes.
+This set is deliberately small: it covers the recurring "idempotency key /
+timestamp header / signed request" cases. Additional functions are additive
+(new `fn-name` alternatives), not breaking changes.
 
 **Resolution order** (first match wins):
 1. Values captured by a prior `@save` in the same run (§7.2), resolved
    through the *resolving file's own `@use` view* (§7.3): its own
-   request-blocks' saves, plus its dependencies' saves — either flattened
+   request-blocks' saves, plus its dependencies' saves, either flattened
    in (unaliased `@use`) or reachable only as `alias.name` (aliased
    `@use ... as alias`). This view is assembled per file, not one
-   indiscriminate global table — see §7.3 for exactly how.
+   indiscriminate global table; see §7.3 for exactly how.
 2. Values from the `--env <file>` loaded at CLI startup
 3. The active `[env.<name>]` table in `probe.toml` (§13), if one was
    selected and a project config file was found
 4. Process environment variables
 
-`function-call`s are evaluated fresh each time they're encountered — they
+`function-call`s are evaluated fresh each time they're encountered; they
 don't participate in this lookup order themselves, only their arguments do.
 
 An unresolved `{{identifier}}`, or a `function-call` with an unresolvable
@@ -313,21 +306,22 @@ json-literal      = "null" / "true" / "false" / number / string
 - `matches` (in `value-assert`) compares against a regular expression
   `string` value.
 - `length-assert` applies `comparator` to the element count of an array or
-  object `assert-target`, or the character count of a string target — e.g.
+  object `assert-target`, or the character count of a string target, e.g.
   `@assert body.items length == 3`, `@assert body.items length >= 1`. It's
   a syntax error against `status`/`duration` (scalars have no length).
 - `existence-assert` checks whether `assert-target` is present in the
-  response at all — distinct from `value-assert ... != null`, which requires
-  the key to be present *and* non-null. `@assert body.deletedAt not exists`
-  passes if the key is absent; `@assert body.deletedAt != null` would error
-  (unresolvable target) if the key is absent rather than just `null`.
+  response at all. This is distinct from `value-assert ... != null`, which
+  requires the key to be present *and* non-null. `@assert body.deletedAt not
+  exists` passes if the key is absent; `@assert body.deletedAt != null`
+  would error (unresolvable target) if the key is absent rather than just
+  `null`.
 - `schema-assert` validates the entire response body against a JSON Schema
   file at `quoted-path` (§7.3), resolved relative to the `.probe` file.
   This is the one `@assert` form that doesn't take an `assert-target`
-  narrower than the whole `body` — it's a contract-level check, not a
+  narrower than the whole `body`; it's a contract-level check, not a
   field-level one.
 - A failed `@assert` (any of the four forms) fails the enclosing request;
-  execution continues with the next request block (per PRD §5.3).
+  execution continues with the next request block.
 
 Examples:
 ```
@@ -361,7 +355,7 @@ requests via `{{identifier}}` interpolation (§6) for the rest of the run.
 ```abnf
 use-directive      = "@use" SP quoted-path [ SP "as" SP simple-identifier ] line-ending
 quoted-path        = DQUOTE *(%x20-21 / %x23-7E) DQUOTE   ; any char but DQUOTE
-simple-identifier  = ALPHA *( ALPHA / DIGIT / "_" )        ; no dots — see below
+simple-identifier  = ALPHA *( ALPHA / DIGIT / "_" )        ; no dots, see below
 ```
 
 Declares that this file depends on another `.probe` file, which must run to
@@ -377,7 +371,7 @@ Authorization: Bearer {{token}}
 ...
 ```
 
-**Execution semantics** (this is a run-time concern, not just syntax — it
+**Execution semantics** (this is a run-time concern, not just syntax; it
 changes what running a file means):
 
 - Before a file's own request-blocks execute, each of its `@use`d files
@@ -387,49 +381,50 @@ changes what running a file means):
   `probe run`**, no matter how many other files `@use` it. If both
   `users.probe` and `orders.probe` `@use "./login.probe"` in the same
   invocation, `login.probe` runs once; both reuse its captured `@save`
-  results (each through its own view, per below — aliasing them
+  results (each through its own view, per below; aliasing them
   differently, or not at all, doesn't force a second run).
 - A dependency cycle (`A` uses `B` uses `A`) is a hard error at resolution
   time, reported with the offending cycle path. This formalizes the
-  "circular dependencies" edge case already named in the PRD (§5.3).
+  "circular dependencies" edge case.
 - If a dependency's requests or assertions fail, every file that
-  transitively depends on it fails too, attributed to the dependency —
+  transitively depends on it fails too, attributed to the dependency;
   dependents are not run against a broken fixture. How this is *reported*
-  in CLI output is a test-runner (M3) concern, not specified here.
+  in CLI output is a test-runner concern, not specified here.
 
 **Namespacing (`as alias`) and variable visibility:**
 
-Each file builds its own **view** of `{{identifier}}`-resolvable names —
-resolution-order tier 1 (§6) — out of two sources: its own request-blocks'
+Each file builds its own **view** of `{{identifier}}`-resolvable names,
+resolution-order tier 1 (§6), out of two sources: its own request-blocks'
 `@save`s, and its `@use`d dependencies' `@save`s, combined per directive:
 
 - **`@use "path" as alias`** (namespaced): the dependency's saved values are
   reachable *only* as `{{alias.name}}`, never as bare `{{name}}`. This is
   the only place in the grammar a dotted `identifier` is meaningful (§6).
-  Namespacing is local to the importing file — it doesn't rename anything
+  Namespacing is local to the importing file; it doesn't rename anything
   inside the dependency itself, and it doesn't propagate: if that dependency
   has its own `@use`s, *their* names aren't re-exposed through `alias.*`
-  unless the dependency chooses to re-export them (not a v1 concept — see
+  unless the dependency chooses to re-export them (not a v1 concept; see
   §11).
 - **`@use "path"`** (unaliased, the v1-original form): the dependency's
   saved values flatten directly into the importing file's own flat
-  namespace, alongside its own `@save`s — unchanged from pre-v0.3 behavior.
+  namespace, alongside its own `@save`s. This is unchanged from pre-v0.3
+  behavior.
 - **Collision rule for flattened (unaliased) names**: if two different
-  `@use`d files — neither one a dependency of the other — would both
+  `@use`d files, neither one a dependency of the other, would both
   contribute the same flat name to the same importing file's view, that's a
   **hard error at resolution time**, naming both source files and the
   conflicting identifier. Fix it by aliasing at least one of them.
-  Rebinding is *not* an error when it happens within one dependency chain —
-  a file's own `@save` may always override a flat name it imported (the
+  Rebinding is *not* an error when it happens within one dependency chain.
+  A file's own `@save` may always override a flat name it imported (the
   importer's own value wins), and a later request in the same file may
-  freely re-`@save` a name it (or its flat imports) already bound — e.g. a
+  freely re-`@save` a name it (or its flat imports) already bound, e.g. a
   token-refresh request re-saving `token` after login is normal and allowed.
 - **Alias collisions**: two `@use` lines in the same file may not declare
-  the same `alias` — that's a syntax-adjacent error caught at resolution
+  the same `alias`. That's a syntax-adjacent error caught at resolution
   time (same phase as the flat-name collision above).
 
 ```
-# orders.probe — same dependency imported twice, safely, via aliasing
+# orders.probe: same dependency imported twice, safely, via aliasing
 @use "./login-as-customer.probe" as customer
 @use "./login-as-admin.probe" as admin
 
@@ -440,14 +435,14 @@ Authorization: Bearer {{admin.token}}
 ```
 
 Without the `as` clauses here, both dependencies would `@save token`, and
-`{{token}}` downstream would silently resolve to whichever one ran last —
-exactly the shadowing hazard aliasing exists to close.
+`{{token}}` downstream would silently resolve to whichever one ran last.
+That's exactly the shadowing hazard aliasing exists to close.
 
 - Selectively importing only *some* of a dependency's variables (as opposed
-  to all of them, whether flattened or under one alias) is still deferred —
+  to all of them, whether flattened or under one alias) is still deferred;
   see §11.
 
-## 8. Consolidated Grammar (Appendix)
+## 8. Consolidated grammar (appendix)
 
 ```abnf
 probe-file        = *blank-line [ *comment-line ] *use-directive request-block
@@ -507,7 +502,7 @@ line-ending       = CRLF / LF
 `HTTP-version` are as defined in RFC 9110; `number`, `string` follow
 standard JSON literal syntax, RFC 8259 §6–7.)*
 
-## 9. Complete Example
+## 9. Complete example
 
 ```
 # Login and create user test
@@ -561,7 +556,7 @@ Content-Type: application/json
 ```
 
 Running `probe run users.probe` runs `login.probe` first automatically and
-makes `{{token}}` available — no separate invocation needed.
+makes `{{token}}` available; no separate invocation needed.
 
 ## 10. Deviations from RFC 9110
 
@@ -571,50 +566,47 @@ makes `{{token}}` available — no separate invocation needed.
 | Comments | Not defined | `#` lines, leading position only |
 | Multiple messages per stream | Not defined (one message per connection direction) | `###`-delimited blocks per file |
 | Variable interpolation | Not defined | `{{identifier}}` / `{{function()}}`, resolved before send |
-| Cross-file composition | No notion of "file" at all — out of scope for the RFC | `@use "<path>"`, run before the declaring file |
-| Multipart body framing | `multipart/form-data` body is opaque octets on the wire (RFC 9110 defers to RFC 7578) | `@field`/`@file` directive lines (§4.4) — the implementation assembles the actual wire encoding |
-| Request-block cleanup | No notion of "cleanup" — out of scope for the RFC | `~~~` teardown block (§5.1), tied to and run after its owning request |
+| Cross-file composition | No notion of "file" at all; out of scope for the RFC | `@use "<path>"`, run before the declaring file |
+| Multipart body framing | `multipart/form-data` body is opaque octets on the wire (RFC 9110 defers to RFC 7578) | `@field`/`@file` directive lines (§4.4); the implementation assembles the actual wire encoding |
+| Request-block cleanup | No notion of "cleanup"; out of scope for the RFC | `~~~` teardown block (§5.1), tied to and run after its owning request |
 
-## 11. Non-Goals for v1 (deferred)
+## 11. Non-goals for v1 (deferred)
 
-- **Control flow** (loops, conditionals) — PRD lists it as a Core goal but
-  gives no syntax; deliberately out of scope until a v2 addendum to this
-  spec, per the [roadmap](./roadmap.md#6-open-decisions-log).
+- **Control flow** (loops, conditionals): deliberately out of scope until a
+  v2 addendum to this spec.
 - Request-to-request references by `request-name` (only forward capture via
   `@save`/`{{var}}` is specified).
-- Selective (partial) variable import on `@use` — importing only *some* of
+- Selective (partial) variable import on `@use`: importing only *some* of
   a dependency's `@save`d names rather than all of them. `@use ... as alias`
   (§7.3) namespaces the whole set to avoid collisions; it doesn't let you
   cherry-pick a subset.
 - Generic file-scoped constant declarations (i.e. a value not derived from
-  a response) — use `--env` for that; `@use` only covers importing another
+  a response). Use `--env` for that; `@use` only covers importing another
   file's *response-derived* variables.
-- `@assert` forms beyond value/length/existence/schema (§7.1) — e.g. full
+- `@assert` forms beyond value/length/existence/schema (§7.1), e.g. full
   deep-equality against a JSON fixture, array-as-set comparisons ("contains
   exactly these elements, any order").
 - Chaining more than one teardown block per request-block (§5.1), and
   file-level (as opposed to request-level) teardown.
-- Composable/nested function calls in interpolation (§6) — v1's
+- Composable/nested function calls in interpolation (§6): v1's
   `function-call` args are limited to `identifier`/literal, not another
   `function-call`.
-- Everything in
-  [roadmap §7](./roadmap.md#7-future-considerations-not-yet-scoped) that
-  isn't a grammar change (data-driven runs, retries, cookie jars, import
-  from other tools, etc.) — tracked there rather than here since it doesn't
-  affect this document's grammar.
+- Operational features that don't affect this document's grammar:
+  data-driven runs, retries, cookie jars, importing from other tools, and
+  similar.
 
 ## 12. Versioning
 
-This document versions independently of the PRD. Breaking grammar changes
-bump the major/minor version in the title; any implementation of this
-grammar (covering both the base HTTP syntax and the Probe-specific
+This document has its own version, tracked separately. Breaking grammar
+changes bump the major/minor version in the title; any implementation of
+this grammar (covering both the base HTTP syntax and the Probe-specific
 extensions) should track which spec version it implements. `probe.toml`
 (§13) is a companion file format, not part of the `.probe` grammar itself,
-and versions independently — see §13.
+and versions independently; see §13.
 
-## 13. Project Configuration File (`probe.toml`)
+## 13. Project configuration file (`probe.toml`)
 
-*Not part of the `.probe` grammar (§1–§10 above) — this section specifies a
+*Not part of the `.probe` grammar (§1–§10 above). This section specifies a
 companion TOML file that supplies defaults `.probe` files rely on but don't
 declare themselves, chiefly per-environment `baseUrl` values.*
 
@@ -623,7 +615,7 @@ declare themselves, chiefly per-environment `baseUrl` values.*
 Running `probe run <file>` searches for `probe.toml` starting in `<file>`'s
 directory and walking up ancestor directories (the same walk-to-root pattern
 `.git` discovery uses), stopping at the first one found. No `probe.toml` is
-not an error — defaults are simply empty.
+not an error; defaults are simply empty.
 
 ### 13.2 Structure
 
@@ -652,11 +644,10 @@ baseUrl = "https://staging.api.example.com"
 - If `--env <name>` is passed but no matching `[env.<name>]` table exists,
   that's a startup error, not a silent fall-through to defaults.
 
-### 13.3 Relationship to `--env <file>` (PRD §7.3)
+### 13.3 Relationship to `--env <file>`
 
-The PRD's existing `--env <file>` flag (a flat key=value dotenv-style file)
-and this `probe.toml`'s `[env.<name>]` tables overlap in purpose. **Open
+The existing `--env <file>` flag (a flat key=value dotenv-style file) and
+this `probe.toml`'s `[env.<name>]` tables overlap in purpose. **Open
 decision, not resolved by this spec**: whether `--env <file>` is kept as a
 lower-precedence override mechanism (as reflected in §6's resolution order,
-tier 2 vs. tier 3) or is subsumed entirely by `probe.toml` before M3. Tracked
-in [roadmap §6](./roadmap.md#6-open-decisions-log).
+tier 2 vs. tier 3) or is subsumed entirely by `probe.toml`.

@@ -4,15 +4,14 @@
 
 **A text-based API testing tool built on HTTP message syntax.**
 
-Requests are written as plain `.probe` files — a request line, headers, and
-a body, the same shape as a raw HTTP message. The CLI parses one, sends it
-over the wire, and prints the response.
+Requests are written as plain `.probe` files, in the same shape as a raw
+HTTP message: a request line, headers, and a body. The CLI parses one,
+sends it over the wire, and prints the response.
 
-The full design — variable interpolation, assertions, multi-request files,
-project config, and more — is written up in
-[`docs/language-spec.md`](docs/language-spec.md). This README documents
-only what's implemented today; the spec describes where the language is
-headed, not what runs yet.
+[`docs/language-spec.md`](docs/language-spec.md) describes the full
+design: variable interpolation, assertions, multi-request files, project
+config, and more. This README covers only what's implemented today; the
+spec is about where the language is headed, not what runs yet.
 
 ## Status
 
@@ -23,18 +22,18 @@ to end; most of the DSL described in the language spec isn't wired up.
 
 - Parsing one request per `.probe` file: method, request target, optional
   HTTP version, headers, and a raw body.
-- `probe run <file>.probe` — parses the file, sends the request over real
+- `probe run <file>.probe`: parses the file, sends the request over real
   HTTP (`net/http`), and prints the response body.
-- `-v` / `--verbose` — prints the raw request and response, wire-format, as
+- `-v` / `--verbose`: prints the raw request and response, wire format, as
   they cross the transport.
 
 **Designed, not built yet:**
 
-- Multiple requests per file (`###`-separated) — the grammar currently
+- Multiple requests per file (`###`-separated): the grammar currently
   parses one request block per file.
-- `{{variable}}` interpolation — braces aren't special yet;
+- `{{variable}}` interpolation: braces aren't special yet.
 - `@assert`, `@save`, `@use`, and `probe.toml` project config.
-- Sending an actual `multipart/form-data` body — `@field` / `@file` lines
+- Sending an actual `multipart/form-data` body: `@field` / `@file` lines
   parse into structured data, but the CLI doesn't build a request body from
   them yet, so a file using them currently sends an empty body.
 
@@ -44,8 +43,8 @@ Two independent packages:
 
 | Path | What it is |
 |---|---|
-| [`tree-sitter-probe/`](tree-sitter-probe/) | The grammar — Node tooling, multi-language bindings |
-| [`cli/`](cli/) | The Go CLI (`probe`) — consumes the grammar via its Go binding |
+| [`tree-sitter-probe/`](tree-sitter-probe/) | The grammar: Node tooling, multi-language bindings |
+| [`cli/`](cli/) | The Go CLI (`probe`), built on the grammar's Go binding |
 
 A root `go.work` ties `cli/` and `tree-sitter-probe/`'s Go binding together.
 
@@ -53,8 +52,8 @@ A root `go.work` ties `cli/` and `tree-sitter-probe/`'s Go binding together.
 
 ### Requirements
 
-- Go 1.26+ — to build and run the CLI
-- Node.js + npm — only if you're changing the grammar itself
+- Go 1.26+, to build and run the CLI
+- Node.js + npm, only if you're changing the grammar itself
 
 ### CLI
 
@@ -90,8 +89,8 @@ cd cli
 ./build/probe run public.probe
 ```
 
-Sends the request and prints the response body — a real call to Alpha
-Vantage's public demo endpoint.
+Sends the request and prints the response body. This is a real call to
+Alpha Vantage's public demo endpoint.
 
 ### POST with a JSON body, verbose
 
