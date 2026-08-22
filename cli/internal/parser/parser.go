@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 
 	ts_probe "github.com/charukak/probe/tree-sitter-probe/bindings/go"
@@ -23,6 +25,8 @@ const (
 	MultipartBodyKind    NodeKind = "multipart_body"
 	MultipartPartKind    NodeKind = "multipart_part"
 )
+
+var ErrFailedtoParseCode = errors.New("failed to parse code")
 
 type SourceFile struct {
 	Children []RequestBlock
@@ -72,7 +76,7 @@ func Parse(source []byte) (*SourceFile, error) {
 	// Parse the string into an Abstract Syntax Tree (AST)
 	tree := parser.Parse(source, nil)
 	if tree == nil {
-		panic("Failed to parse code.")
+		return nil, ErrFailedtoParseCode
 	}
 
 	// CRITICAL: Manually close the tree when finished

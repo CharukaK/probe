@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log/slog"
+	"os"
+
 	"github.com/charukak/probe/cli/internal/command/run"
 	"github.com/spf13/cobra"
 )
@@ -11,7 +14,8 @@ var RootCmd = &cobra.Command{
 
 func main() {
 	if err := RootCmd.Execute(); err != nil {
-		return
+		slog.Error("error executing command", "error", err)
+		os.Exit(1)
 	}
 }
 
