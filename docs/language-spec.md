@@ -651,3 +651,165 @@ this `probe.toml`'s `[env.<name>]` tables overlap in purpose. **Open
 decision, not resolved by this spec**: whether `--env <file>` is kept as a
 lower-precedence override mechanism (as reflected in §6's resolution order,
 tier 2 vs. tier 3) or is subsumed entirely by `probe.toml`.
+
+## 14. Multi-protocol method classification (proposed)
+
+*Status: proposed, from a 2026-08-23 design conversation. Not decided, not
+implemented, and out of the "v1 scope only" line at the top of this
+document; v1 is HTTP-only. Accepting this would extend the grammar past
+what the PRD's non-goals currently allow (PRD §1.5, §4.3 list WebSocket and
+gRPC support as explicitly out of scope), and it would earn a real version
+bump under §12's rule once it lands, not just this section. Recorded here
+so the design isn't lost, not as a commitment to build it.*
+
+The core idea: `method` is already `token` (RFC 9110 §9.1), unrestricted
+beyond the standard verbs (§4.1). Four method values are reserved to select
+a protocol handler instead of an HTTP verb: `GRAPHQL`, `GRPC`, `WS`, `WSS`.
+`request-line` itself doesn't change. No new grammar there, just four
+tokens an implementation treats specially. A reserved method is an exact
+uppercase match; `graphql`, `Graphql`, etc. are ordinary (if unusual) HTTP
+extension methods, not the reserved form.
+
+Nothing about `request-target` changes either. `absolute-form` already
+covers a GraphQL endpoint URL, a gRPC method path
+(`scheme://host:port/package.Service/Method`, gRPC's actual addressing
+scheme over HTTP/2), and a `ws://`/`wss://` socket URL. If the URL's scheme
+and the method disagree (e.g. `WSS` against an `http://` target), the
+method wins.
+
+Each reserved method synthesizes the transport-level headers its protocol
+needs (`Content-Type`, `Upgrade`/`Sec-WebSocket-*`, and so on) instead of
+requiring them written out by hand. An explicit `field-line` for the same
+header in the request block overrides the synthesized value, the same
+precedence multipart bodies already give an explicit `boundary` over the
+generated one (§4.4).
+
+### 14.1 `GRAPHQL`
+
+Synthesizes `POST` and `Content-Type: application/json`. Adds a fourth
+`message_body` alternative alongside `octet_body` and `multipart_body`
+(§4.3, §4.4):
+
+```abnf
+graphql-body         = graphql-query-text [ *blank-line variables-directive ]
+graphql-query-text   = *OCTET   ; to variables-directive, separator,
+                                ; directive-line, or EOF, same framing
+                                ; octet-body already uses
+variables-directive  = "@variables" SP json-value line-ending
+```
+
+`json-value` is a JSON value per RFC 8259 §3 (so, unlike `assert-value`'s
+`json-literal`, an object or array is allowed; `@variables` is normally an
+object). Strings inside it may carry `{{variable}}` interpolation tokens,
+resolved the same as anywhere else in a body (§4.3, §6).
+
+```
+GRAPHQL {{baseUrl}}/graphql
+
+query GetUser($id: ID!) {
+  user(id: $id) { id name }
+}
+
+@variables {"id": "{{userId}}"}
+
+@assert status == 200
+@assert body.errors not exists
+@save userName = body.data.user.name
+```
+
+`@assert`/`@save` need no new grammar: `body.data.*` and `body.errors` are
+ordinary `body-target` dot-paths (§7.1). Because GraphQL returns `200` on
+most errors, `@assert body.errors not exists` (an `existence-assert`, §7.1)
+is the actual pass/fail check, not `status`.
+
+Whether `@variables` under a non-`GRAPHQL` method is a parse error or a
+semantic one follows the existing pattern: `graphql-body` parses
+structurally under any method, same as `multipart_body` does today (§4.4
+already allows `@field`/`@file` to parse and then rejects them
+semantically outside a multipart body); a mismatched method is caught at
+validation, not at parse time.
+
+**Implementation note, not spec.** The external scanner
+(`tree-sitter-probe/src/scanner.c`) currently reserves `###`, `~~~`,
+`@assert`, `@save`, `@field`, `@file` as boundary markers `OCTET_BODY`
+stops before. `@variables` would need to join that set before
+`graphql-query-text` could coexist with the existing body productions
+without ambiguity.
+
+### 14.2 `GRPC`
+
+Synthesizes an HTTP/2 request with `content-type: application/grpc+json`
+(assuming JSON transcoding of the Protobuf message, grpc-gateway/grpcurl
+style, rather than requiring the raw binary encoding to be hand-written).
+The body stays a plain JSON `octet_body`; no new body grammar.
+
+gRPC's real result code is a trailer, independent of the HTTP/2 `:status`
+pseudo-header (which is `200` on most calls, failed or not). Reusing
+`status` for both would mean the same token silently means two different
+things depending on which method preceded it, so this adds a distinct
+target instead of overloading `status`:
+
+```abnf
+assert-target = "status" / "duration" / "grpc-status" / header-target / body-target
+```
+
+`grpc-status` is a scalar like `status`/`duration`: a `length-assert`
+against it is a syntax error for the same reason (§7.1).
+
+```
+GRPC {{baseUrl}}/user.UserService/GetUser
+Authorization: Bearer {{token}}
+
+{"id": "{{userId}}"}
+
+@assert grpc-status == 0
+@save userName = body.name
+```
+
+Not addressed here, and not solved by method classification alone:
+
+- **Message shape.** JSON transcoding needs a Protobuf descriptor source
+  (server reflection, or a compiled `.proto` file) to know what a method's
+  request/response even look like. How a `.probe` file would declare that
+  source (a `@proto "<path>"` directive, mirroring `@use`'s `quoted-path`,
+  is the obvious shape) isn't specified.
+- **Streaming RPCs.** Client-streaming, server-streaming, and bidi calls
+  don't fit one request block producing one response. See §14.4.
+
+### 14.3 `WS` / `WSS`
+
+Synthesizes `GET` plus `Upgrade: websocket`, `Connection: Upgrade`, and
+`Sec-WebSocket-Version: 13`. The handshake itself needs no new grammar.
+It's an ordinary request block, and a successful upgrade is an ordinary
+`@assert status == 101`:
+
+```
+WSS {{baseUrl}}/socket
+Authorization: Bearer {{token}}
+
+@assert status == 101
+```
+
+What happens on the connection after the handshake is out of scope for
+this section. See §14.4.
+
+### 14.4 Deferred: streaming sessions
+
+A WebSocket connection past the handshake, and a streaming gRPC call, are
+both long-lived and bidirectional. Neither fits the "one request block,
+one response" shape `@assert`/`@save` are built around. Both need the same
+kind of thing: a directive family for sending and expecting further
+messages against an already-open connection, e.g. (illustrative, not
+specified):
+
+```
+@send {"type": "subscribe", "channel": "orders"}
+@expect body.type == "ack" timeout 2000
+```
+
+This is the largest unresolved piece of the whole proposal and isn't
+designed past this paragraph. It would need its own grammar section (send/
+expect directive syntax, ordering and timeout semantics) and its own
+execution model (a request block that, once opened, becomes a session
+other directive lines act within). Until it exists, `WS`/`WSS` covers the
+handshake only, and `GRPC` covers unary calls only.
