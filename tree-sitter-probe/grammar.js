@@ -15,7 +15,18 @@ module.exports = grammar({
   externals: $ => [$._octet_body],
   rules: {
     // --- Entry point ---
-    source_file: $ => $.request_block,
+    source_file: $ => seq(
+      repeat($._line_ending),
+      optional($.seprator),
+      $.request_block,
+      repeat(seq(
+        repeat($._line_ending),
+        $.seprator,
+        repeat($._line_ending),
+        $.request_block
+      )),
+      repeat($._line_ending)
+    ),
 
     // --- Low-level primitives ---
     _line_ending: _ => choice('\r\n', '\n'),
@@ -25,6 +36,12 @@ module.exports = grammar({
     octet_body: $ => $._octet_body,
 
     // --- Lexical tokens ---
+    seprator: $ => seq(
+      '###',
+      optional(seq(repeat1($._wsp), field('name', $.request_name))),
+      $._line_ending
+    ),
+    request_name: _ => /[ -~]+/,
     method: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
     request_target: _ => /[!-~]+/, // capture the token
     field_name: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,

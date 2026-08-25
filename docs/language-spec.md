@@ -1,4 +1,4 @@
-# Probe Language Specification (v0.3, Draft)
+# Probe Language Specification (v0.4, Draft)
 
 *This is the formal reference for the `.probe` file format: both its base
 HTTP syntax and its Probe-specific extensions.*
@@ -7,7 +7,7 @@ Status: **Draft, v1 scope only.** Not yet implemented. Control flow
 (loops/conditionals) is explicitly deferred; see §11.
 
 **v0.2 changes**: added built-in functions to interpolation (§6), multipart
-/ file-upload bodies (§4.4), teardown blocks (§5.1), expanded `@assert`
+/ file-upload bodies (§4.4), teardown blocks (§5), expanded `@assert`
 comparators for length/existence/schema (§7.1), and the `probe.toml` project
 configuration file (§13). These were identified as grammar-affecting gaps
 that needed resolving before the Probe-extensions layer could be finalized.
@@ -16,6 +16,14 @@ that needed resolving before the Probe-extensions layer could be finalized.
 a variable-shadowing hole in the flat import model v0.1–v0.2 shipped with
 (two `@use`d dependencies, or a dependency and its importer, saving the same
 identifier would silently overwrite one another with no error).
+
+**v0.4 changes**: dropped the standalone `comment-line` (`#`) construct —
+nothing in the PRD or roadmap ever required it, and `separator` (`###`,
+§3) already carries optional free-form trailing text, so it does the
+labeling/documentation job a `#` comment would have. `separator` is now
+also allowed (optionally) before a file's first request block, not just
+between blocks, so that first block can carry a label too. `~~~` teardown
+blocks (§5) are unaffected and unchanged.
 
 ## 1. Notation
 
@@ -35,32 +43,62 @@ line-ending = CRLF / LF   ; source files may use either; wire requests are
 ## 2. File structure overview
 
 ```abnf
-probe-file    = *blank-line [ *comment-line ] *use-directive request-block
+probe-file    = *blank-line [ separator ] *use-directive request-block
                 *( *blank-line separator *blank-line request-block ) *blank-line
-request-block = *comment-line http-request *directive-line [ teardown-block ]
+request-block = http-request *directive-line [ teardown-block ]
 blank-line    = line-ending   ; an empty line, carries no meaning here
 ```
 
 A `.probe` file is one or more **request blocks**, each a plain RFC 9110
-HTTP request optionally preceded by comments and followed by Probe
-directive lines, separated by an explicit `###` delimiter. Blank lines
-around a `separator` are optional and insignificant; see §5. A file may
-also declare dependencies on other files via leading `@use` directives
-(§7.3) before its first request-block. A request-block may additionally
-carry its own **teardown block** (§5.1), run after it regardless of outcome.
+HTTP request followed by Probe directive lines, separated by an explicit
+`###` delimiter (§3). There's no separate comment construct — a
+`separator`'s optional trailing text doubles as that block's label, so it's
+also where block-level documentation goes. Between blocks the `separator`
+is required; before the file's first block it's optional, allowed purely to
+label that first block (§3). A file may also declare dependencies on other
+files via leading `@use` directives (§7.3) before its first request-block.
+A request-block may additionally carry its own **teardown block** (§5), run
+after it regardless of outcome.
 
-## 3. Comments
+## 3. Request separators
 
 ```abnf
-comment-line = "#" *(VCHAR / SP / HTAB) line-ending
+separator    = "###" [ 1*SP request-name ] line-ending
+request-name = 1*(VCHAR / SP)
 ```
 
-- A comment is a line whose first non-whitespace character is `#`.
-- Comments are only valid **before the request-line** of a block (leading
-  comments), not inside the header block or body, to avoid ambiguity with
-  RFC 9110 header-field syntax (which has no comment production). A `#` line
-  found after the request-line but before the blank line that ends headers
-  is a syntax error.
+- `###` on its own line starts a new request block. Text after `###` on the
+  same line is that request's name (used in CLI/report output, as a
+  reference target for future chaining features, and as a free-form label —
+  there's no separate comment construct; a `###` line's trailing text is
+  where block-level documentation goes).
+- Between two request blocks, `###` is **required** — it's the only thing
+  that marks where one block ends and the next begins.
+- Before the file's **first** request block, `###` is **optional**: nothing
+  precedes it there to separate, but a lone `### <name>` line is still
+  allowed purely as a label for that first block. This is the one place a
+  `separator` doesn't imply an actual boundary.
+- **No blank line is required** on either side of a `separator`. Both of
+  these are valid and equivalent:
+
+  ```
+  @assert status == 200
+  ### Create user
+  POST {{baseUrl}}/users
+  ```
+
+  ```
+  @assert status == 200
+
+  ### Create user
+
+  POST {{baseUrl}}/users
+  ```
+
+  Blank lines there are purely cosmetic (`blank-line` in §2); write them or
+  not. The **one** blank line that is never optional is the one ending a
+  request's header block, per RFC 9110 framing (§4.3). That's what
+  separates headers from the body, not what separates requests.
 
 ## 4. Request blocks
 
@@ -141,41 +179,7 @@ Authorization: Bearer {{token}}
 @assert status == 201
 ```
 
-## 5. Request separators
-
-```abnf
-separator = "###" [ 1*SP request-name ] line-ending
-request-name = 1*(VCHAR / SP)
-```
-
-- `###` on its own line starts a new request block. Text after `###` on the
-  same line is that request's name (used in CLI/report output and as a
-  reference target for future chaining features).
-- The **first** request block in a file has no leading `###`. The
-  separator is only needed *between* requests.
-- **No blank line is required** on either side of a `separator`. Both of
-  these are valid and equivalent:
-
-  ```
-  @assert status == 200
-  ### Create user
-  POST {{baseUrl}}/users
-  ```
-
-  ```
-  @assert status == 200
-
-  ### Create user
-
-  POST {{baseUrl}}/users
-  ```
-
-  Blank lines there are purely cosmetic (`blank-line` in §2); write them or
-  not. The **one** blank line that is never optional is the one ending a
-  request's header block, per RFC 9110 framing (§4.3). That's what
-  separates headers from the body, not what separates requests.
-
-### 5.1 Teardown blocks
+## 5. Teardown blocks
 
 ```abnf
 teardown-block = teardown-sep *blank-line http-request *directive-line
@@ -424,7 +428,7 @@ resolution-order tier 1 (§6), out of two sources: its own request-blocks'
   time (same phase as the flat-name collision above).
 
 ```
-# orders.probe: same dependency imported twice, safely, via aliasing
+### orders.probe: same dependency imported twice, safely, via aliasing
 @use "./login-as-customer.probe" as customer
 @use "./login-as-admin.probe" as admin
 
@@ -445,14 +449,14 @@ That's exactly the shadowing hazard aliasing exists to close.
 ## 8. Consolidated grammar (appendix)
 
 ```abnf
-probe-file        = *blank-line [ *comment-line ] *use-directive request-block
+probe-file        = *blank-line [ separator ] *use-directive request-block
                     *( *blank-line separator *blank-line request-block ) *blank-line
-request-block     = *comment-line http-request *directive-line [ teardown-block ]
+request-block     = http-request *directive-line [ teardown-block ]
 blank-line        = line-ending
 separator         = "###" [ 1*SP request-name ] line-ending
-request-name      = 1*(VCHAR / SP)
 teardown-block    = teardown-sep *blank-line http-request *directive-line
 teardown-sep      = "~~~" [ 1*SP request-name ] line-ending
+request-name      = 1*(VCHAR / SP)
 
 http-request      = request-line header-block line-ending [ message-body ]
 request-line      = method SP request-target [ SP HTTP-version ] line-ending
@@ -466,8 +470,6 @@ multipart-body    = 1*( multipart-part line-ending )
 multipart-part    = field-part / file-part
 field-part        = "@field" SP identifier SP "=" SP ( string / interpolation )
 file-part         = "@file" SP identifier SP "=" SP quoted-path [ SP "as" SP string ]
-
-comment-line      = "#" *(VCHAR / SP / HTAB) line-ending
 
 use-directive     = "@use" SP quoted-path [ SP "as" SP simple-identifier ] line-ending
 quoted-path       = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
@@ -505,7 +507,7 @@ standard JSON literal syntax, RFC 8259 §6–7.)*
 ## 9. Complete example
 
 ```
-# Login and create user test
+### Login and create user test
 
 POST {{baseUrl}}/login
 Content-Type: application/json
@@ -531,7 +533,7 @@ Content-Type: application/json
 Cross-file chaining (§7.3), split across two files instead of one:
 
 ```
-# login.probe
+### login.probe
 POST {{baseUrl}}/login
 Content-Type: application/json
 
@@ -542,7 +544,7 @@ Content-Type: application/json
 ```
 
 ```
-# users.probe
+### users.probe
 @use "./login.probe"
 
 POST {{baseUrl}}/users
@@ -563,12 +565,11 @@ makes `{{token}}` available; no separate invocation needed.
 | Construct | RFC 9110 | Probe v1 |
 |---|---|---|
 | `HTTP-version` on request-line | Required | Optional, defaults to `HTTP/1.1` |
-| Comments | Not defined | `#` lines, leading position only |
 | Multiple messages per stream | Not defined (one message per connection direction) | `###`-delimited blocks per file |
 | Variable interpolation | Not defined | `{{identifier}}` / `{{function()}}`, resolved before send |
 | Cross-file composition | No notion of "file" at all; out of scope for the RFC | `@use "<path>"`, run before the declaring file |
 | Multipart body framing | `multipart/form-data` body is opaque octets on the wire (RFC 9110 defers to RFC 7578) | `@field`/`@file` directive lines (§4.4); the implementation assembles the actual wire encoding |
-| Request-block cleanup | No notion of "cleanup"; out of scope for the RFC | `~~~` teardown block (§5.1), tied to and run after its owning request |
+| Request-block cleanup | No notion of "cleanup"; out of scope for the RFC | `~~~` teardown block (§5), tied to and run after its owning request |
 
 ## 11. Non-goals for v1 (deferred)
 
@@ -586,7 +587,7 @@ makes `{{token}}` available; no separate invocation needed.
 - `@assert` forms beyond value/length/existence/schema (§7.1), e.g. full
   deep-equality against a JSON fixture, array-as-set comparisons ("contains
   exactly these elements, any order").
-- Chaining more than one teardown block per request-block (§5.1), and
+- Chaining more than one teardown block per request-block (§5), and
   file-level (as opposed to request-level) teardown.
 - Composable/nested function calls in interpolation (§6): v1's
   `function-call` args are limited to `identifier`/literal, not another

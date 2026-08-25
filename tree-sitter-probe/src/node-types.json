@@ -175,16 +175,36 @@
     }
   },
   {
+    "type": "seprator",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "request_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "request_block",
+          "named": true
+        },
+        {
+          "type": "seprator",
           "named": true
         }
       ]
@@ -196,6 +216,10 @@
   },
   {
     "type": "\r\n",
+    "named": false
+  },
+  {
+    "type": "###",
     "named": false
   },
   {
@@ -224,6 +248,10 @@
   },
   {
     "type": "field_value_seperator",
+    "named": true
+  },
+  {
+    "type": "request_name",
     "named": true
   },
   {

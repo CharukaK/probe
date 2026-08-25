@@ -1,0 +1,207 @@
+=================================================================
+two request blocks separated by an unnamed ### separator
+=================================================================
+GET /
+
+###
+
+POST /b
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)))
+  (seprator)
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+two request blocks separated by a named ### separator
+=================================================================
+GET /
+
+### second request
+
+POST /b
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)))
+  (seprator
+    name: (request_name))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+three request blocks chained with ### separators
+=================================================================
+GET /a
+
+###
+
+GET /b
+
+###
+
+GET /c
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)))
+  (seprator)
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)))
+  (seprator)
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+leading blank lines before the first request block, no separator needed
+=================================================================
+
+
+GET /
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+a leading unnamed ### separator before the first request block
+=================================================================
+###
+GET /
+
+
+---
+
+(source_file
+  (seprator)
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+a leading named ### separator before the first request block
+=================================================================
+### first
+GET /
+
+
+---
+
+(source_file
+  (seprator
+    name: (request_name))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+trailing blank lines after the last request block
+=================================================================
+GET /
+
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+plain body text that merely resembles a request line is not mistaken for a new request without a ### separator
+=================================================================
+GET /
+
+GET /b
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
+
+=================================================================
+a separator name containing internal spaces
+=================================================================
+GET /
+
+### my test case
+
+GET /b
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)))
+  (seprator
+    name: (request_name))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+a dangling ### separator with no request block after it is an error
+:error
+=================================================================
+GET /
+
+###
+
+---
+
+=================================================================
+consecutive ### separators with no request block between them is an error
+:error
+=================================================================
+GET /
+
+###
+###
+GET /b
+
+---
