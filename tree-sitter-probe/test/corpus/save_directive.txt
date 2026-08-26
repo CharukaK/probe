@@ -1,0 +1,222 @@
+=================================================================
+save_directive: capture a body field
+=================================================================
+GET /
+
+@save token = body.token
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                (path_accessor)
+                name: (identifier)))))))))
+
+=================================================================
+save_directive: whole-body capture, no accessor
+=================================================================
+GET /
+
+@save raw = body
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target))))))
+
+=================================================================
+save_directive: nested body path
+=================================================================
+GET /
+
+@save id = body.user.id
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                (path_accessor)
+                name: (identifier)))
+            accessor: (accessor
+              (member_access
+                (path_accessor)
+                name: (identifier)))))))))
+
+=================================================================
+save_directive: header target
+=================================================================
+GET /
+
+@save reqId = headers.X-Request-Id
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (header_target
+            (path_accessor)
+            name: (field_name)))))))
+
+=================================================================
+save_directive: status target
+=================================================================
+GET /
+
+@save code = status
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target)))))
+
+=================================================================
+save_directive: duration target
+=================================================================
+GET /
+
+@save ms = duration
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target)))))
+
+=================================================================
+save_directive: follows a real message body
+=================================================================
+GET /
+
+hello world
+
+@save token = body.token
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                (path_accessor)
+                name: (identifier)))))))))
+
+=================================================================
+save_directive: no trailing line ending at EOF is unparsed
+:error
+=================================================================
+GET /
+
+@save token = body.token
+---
+
+=================================================================
+save_directive: missing "=" is unparsed
+:error
+=================================================================
+GET /
+
+@save token body.token
+
+---
+
+=================================================================
+save_directive: missing target is unparsed
+:error
+=================================================================
+GET /
+
+@save token =
+
+---
+
+=================================================================
+save_directive: two directives in one block
+=================================================================
+GET /
+
+@save a = body.a
+@save b = body.b
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                (path_accessor)
+                name: (identifier)))))))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                (path_accessor)
+                name: (identifier)))))))))

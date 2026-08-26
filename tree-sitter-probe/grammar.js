@@ -17,6 +17,7 @@ module.exports = grammar({
     // --- Entry point ---
     source_file: $ => seq(
       repeat($._line_ending),
+      repeat(seq($.let_directive, repeat($._line_ending))),
       optional($.seprator),
       $.request_block,
       repeat(seq(
@@ -97,6 +98,9 @@ module.exports = grammar({
       field('root', $.identifier),
       repeat(field('accessor', $.accessor)),
     ),
+    header_target: $ => seq('headers', $.path_accessor, field('name', $.field_name)),
+    body_target: $ => seq('body', repeat(field('accessor', $.accessor))),
+    assert_target: $ => choice('status', 'duration', $.header_target, $.body_target),
     util_reference: $ => seq(
       field('util_name', $.identifier),
       $._util_call_start,
@@ -111,6 +115,29 @@ module.exports = grammar({
       repeat($._wsp),
       $._double_brace_end
     ),
+    json_literal: $ => choice('null', 'true', 'false', $.number, $.string),
+    let_value: $ => choice($.json_literal, $.interpolation),
+    save_directive: $ => seq(
+      '@save',
+      $._wsp,
+      field('name', $.identifier),
+      optional($._wsp),
+      '=',
+      optional($._wsp),
+      field('target', $.assert_target),
+      $._line_ending
+    ),
+    let_directive: $ => seq(
+      '@let',
+      $._wsp,
+      field('name', $.identifier),
+      optional($._wsp),
+      '=',
+      optional($._wsp),
+      field('target', $.let_value),
+      $._line_ending
+    ),
+    directive_line: $ => choice($.save_directive, $.let_directive),
 
     http_version: $ => seq(
       'HTTP/',
@@ -146,7 +173,8 @@ module.exports = grammar({
       $.request_line,
       repeat($.field_line),
       $._line_ending,
-      optional($.message_body)
+      optional($.message_body),
+      repeat($.directive_line)
     )
   }
 });

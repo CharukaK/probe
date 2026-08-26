@@ -54,6 +54,60 @@
     }
   },
   {
+    "type": "assert_target",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "body_target",
+          "named": true
+        },
+        {
+          "type": "header_target",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "body_target",
+    "named": true,
+    "fields": {
+      "accessor": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "accessor",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "directive_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "let_directive",
+          "named": true
+        },
+        {
+          "type": "save_directive",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "field_line",
     "named": true,
     "fields": {
@@ -104,6 +158,32 @@
       "types": [
         {
           "type": "interpolation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "header_target",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "field_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "path_accessor",
           "named": true
         }
       ]
@@ -165,6 +245,70 @@
         },
         {
           "type": "value_reference",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "json_literal",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "let_directive",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "let_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "let_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "interpolation",
+          "named": true
+        },
+        {
+          "type": "json_literal",
           "named": true
         }
       ]
@@ -259,6 +403,10 @@
       "required": true,
       "types": [
         {
+          "type": "directive_line",
+          "named": true
+        },
+        {
           "type": "field_line",
           "named": true
         },
@@ -325,6 +473,32 @@
     }
   },
   {
+    "type": "save_directive",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "assert_target",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "seprator",
     "named": true,
     "fields": {
@@ -349,6 +523,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "let_directive",
+          "named": true
+        },
         {
           "type": "request_block",
           "named": true
@@ -450,6 +628,10 @@
     "named": false
   },
   {
+    "type": "=",
+    "named": false
+  },
+  {
     "type": "@field",
     "named": false
   },
@@ -458,7 +640,19 @@
     "named": false
   },
   {
+    "type": "@let",
+    "named": false
+  },
+  {
+    "type": "@save",
+    "named": false
+  },
+  {
     "type": "HTTP/",
+    "named": false
+  },
+  {
+    "type": "body",
     "named": false
   },
   {
@@ -466,12 +660,28 @@
     "named": true
   },
   {
+    "type": "duration",
+    "named": false
+  },
+  {
+    "type": "false",
+    "named": false
+  },
+  {
     "type": "field_value_seperator",
     "named": true
   },
   {
+    "type": "headers",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
+  },
+  {
+    "type": "null",
+    "named": false
   },
   {
     "type": "number",
@@ -480,6 +690,14 @@
   {
     "type": "request_name",
     "named": true
+  },
+  {
+    "type": "status",
+    "named": false
+  },
+  {
+    "type": "true",
+    "named": false
   },
   {
     "type": "{",

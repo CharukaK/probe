@@ -1,4 +1,4 @@
-# Probe Language Specification (v0.5, Draft)
+# Probe Language Specification (v0.6, Draft)
 
 *This is the formal reference for the `.probe` file format: both its base
 HTTP syntax and its Probe-specific extensions.*
@@ -35,6 +35,15 @@ like any other unresolved reference. `body-target` (§7.1) now reads as
 `path` rooted at `body` instead of restating the same chain grammar under
 `json-key`.
 
+**v0.6 changes**: added `@let` (§7.4), a directive for declaring a local
+constant or copying/shadowing an existing variable without deriving the
+value from a response — closing the gap `@save`'s response-only
+`assert-target` RHS left for that case. Valid in two positions: as a
+leading file-scoped directive alongside `@use` (§2), or as an ordinary
+request-scoped `directive-line` (§7) that takes effect for everything
+after it, same as a re-`@save`. This retires the §11 non-goal that
+previously pointed generic file-scoped constants at `--env` only.
+
 ## 1. Notation
 
 Grammar is given in ABNF ([RFC 5234](https://www.rfc-editor.org/rfc/rfc5234)),
@@ -53,7 +62,8 @@ line-ending = CRLF / LF   ; source files may use either; wire requests are
 ## 2. File structure overview
 
 ```abnf
-probe-file    = *blank-line [ separator ] *use-directive request-block
+probe-file    = *blank-line [ separator ] *( use-directive / let-directive )
+                request-block
                 *( *blank-line separator *blank-line request-block ) *blank-line
 request-block = http-request *directive-line [ teardown-block ]
 blank-line    = line-ending   ; an empty line, carries no meaning here
@@ -66,8 +76,9 @@ HTTP request followed by Probe directive lines, separated by an explicit
 also where block-level documentation goes. Between blocks the `separator`
 is required; before the file's first block it's optional, allowed purely to
 label that first block (§3). A file may also declare dependencies on other
-files via leading `@use` directives (§7.3) before its first request-block.
-A request-block may additionally carry its own **teardown block** (§5), run
+files via leading `@use` directives (§7.3), and/or file-scoped constants
+via leading `@let` directives (§7.4), before its first request-block. A
+request-block may additionally carry its own **teardown block** (§5), run
 after it regardless of outcome.
 
 ## 3. Request separators
@@ -278,11 +289,11 @@ timestamp header / signed request" cases. Additional functions are additive
 (new `fn-name` alternatives), not breaking changes.
 
 **Resolution order** (first match wins):
-1. Values captured by a prior `@save` in the same run (§7.2), resolved
-   through the *resolving file's own `@use` view* (§7.3): its own
-   request-blocks' saves, plus its dependencies' saves, either flattened
-   in (unaliased `@use`) or reachable only as `alias.name` (aliased
-   `@use ... as alias`). This view is assembled per file, not one
+1. Values bound by a prior `@save` or `@let` in the same run (§7.2, §7.4),
+   resolved through the *resolving file's own `@use` view* (§7.3): its own
+   request-blocks' saves/lets, plus its dependencies' saves, either
+   flattened in (unaliased `@use`) or reachable only as `alias.name`
+   (aliased `@use ... as alias`). This view is assembled per file, not one
    indiscriminate global table; see §7.3 for exactly how.
 2. Values from the `--env <file>` loaded at CLI startup
 3. The active `[env.<name>]` table in `probe.toml` (§13), if one was
@@ -300,7 +311,7 @@ request.
 ## 7. Directives
 
 ```abnf
-directive-line = ( assert-directive / save-directive ) line-ending
+directive-line = ( assert-directive / save-directive / let-directive ) line-ending
 ```
 
 Directive lines follow the request's body (or its blank-line terminator, if
@@ -308,7 +319,11 @@ there's no body) and precede the next `separator` or EOF. `@assert` and
 `@save` (§7.1, §7.2) are **request-scoped**: they attach to the request
 immediately above them. `@use` (§7.3) is **file-scoped**: it's a leading
 directive that appears before any request-block (§2) and declares a
-dependency on another file, rather than describing a single request.
+dependency on another file, rather than describing a single request. `@let`
+(§7.4) is the one directive valid in **either** position: as a leading
+directive alongside `@use`, for a file-scoped constant available
+everywhere in the file; or as a request-scoped `directive-line` alongside
+`@assert`/`@save`, taking effect for everything after it in file order.
 
 ### 7.1 `@assert`
 
@@ -445,10 +460,11 @@ resolution-order tier 1 (§6), out of two sources: its own request-blocks'
   **hard error at resolution time**, naming both source files and the
   conflicting identifier. Fix it by aliasing at least one of them.
   Rebinding is *not* an error when it happens within one dependency chain.
-  A file's own `@save` may always override a flat name it imported (the
-  importer's own value wins), and a later request in the same file may
-  freely re-`@save` a name it (or its flat imports) already bound, e.g. a
-  token-refresh request re-saving `token` after login is normal and allowed.
+  A file's own `@save`/`@let` may always override a flat name it imported
+  (the importer's own value wins), and a later request in the same file may
+  freely re-`@save`/`@let` a name it (or its flat imports) already bound,
+  e.g. a token-refresh request re-saving `token` after login is normal and
+  allowed.
 - **Alias collisions**: two `@use` lines in the same file may not declare
   the same `alias`. That's a syntax-adjacent error caught at resolution
   time (same phase as the flat-name collision above).
@@ -472,10 +488,65 @@ That's exactly the shadowing hazard aliasing exists to close.
   to all of them, whether flattened or under one alias) is still deferred;
   see §11.
 
+### 7.4 `@let`
+
+```abnf
+let-directive = "@let" SP identifier SP "=" SP let-value
+let-value     = json-literal / interpolation
+```
+
+Binds `identifier` to a value that isn't derived from any response —
+either a literal, or a copy of an existing `{{path}}`/`{{function()}}`
+result. This is the local-constant/shadowing counterpart to `@save`
+(§7.2): `@save` always pulls from the response of the request it's
+attached to; `@let` never does. Whichever directive most recently bound a
+name is the one `{{identifier}}` resolution (§6, tier 1) sees.
+
+`@let` may appear in either of two positions:
+
+- **As a leading directive**, alongside `@use` (§2), before the file's
+  first request-block — a file-scoped constant available to every request
+  in the file, the same way a `@use`d dependency's saved values are.
+- **As a request-scoped `directive-line`** (§7), interleaved with
+  `@assert`/`@save` after any request-block — takes effect from that point
+  in file order onward, e.g. overriding a value for the requests that
+  follow without needing a real response to derive it from.
+
+```
+@let apiVersion = "v2"
+
+GET {{baseUrl}}/{{apiVersion}}/status
+
+@assert status == 200
+```
+
+```
+POST {{baseUrl}}/login
+...
+@save token = body.token
+
+### Use a hardcoded token instead, for this one debugging run
+@let token = "debug-token-123"
+
+GET {{baseUrl}}/whoami
+Authorization: Bearer {{token}}
+```
+
+- `@let`'s shadowing/override rules follow the same ones `@save` already
+  has against flat `@use` imports (§7.3): a file's own binding — whether
+  from `@save` or `@let` — always wins over an imported flat name, and a
+  later `@save`/`@let` in the same file may freely re-bind a name already
+  bound. There's no separate collision rule specific to `@let`.
+- Because `let-value` doesn't include `assert-target`, `@let` can't read
+  `status`/`headers.*`/`body.*` directly — that's `@save`'s job. This keeps
+  "where did this value come from" answerable just by which directive
+  bound it.
+
 ## 8. Consolidated grammar (appendix)
 
 ```abnf
-probe-file        = *blank-line [ separator ] *use-directive request-block
+probe-file        = *blank-line [ separator ] *( use-directive / let-directive )
+                    request-block
                     *( *blank-line separator *blank-line request-block ) *blank-line
 request-block     = http-request *directive-line [ teardown-block ]
 blank-line        = line-ending
@@ -500,8 +571,10 @@ file-part         = "@file" SP identifier SP "=" SP quoted-path [ SP "as" SP str
 use-directive     = "@use" SP quoted-path [ SP "as" SP simple-identifier ] line-ending
 quoted-path       = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
 simple-identifier = ALPHA *( ALPHA / DIGIT / "_" )
+let-directive     = "@let" SP identifier SP "=" SP let-value
+let-value         = json-literal / interpolation
 
-directive-line    = ( assert-directive / save-directive ) line-ending
+directive-line    = ( assert-directive / save-directive / let-directive ) line-ending
 assert-directive  = value-assert / length-assert / existence-assert / schema-assert
 value-assert      = "@assert" SP assert-target SP comparator SP assert-value
 length-assert     = "@assert" SP assert-target SP "length" SP comparator SP number
@@ -608,9 +681,6 @@ makes `{{token}}` available; no separate invocation needed.
   a dependency's `@save`d names rather than all of them. `@use ... as alias`
   (§7.3) namespaces the whole set to avoid collisions; it doesn't let you
   cherry-pick a subset.
-- Generic file-scoped constant declarations (i.e. a value not derived from
-  a response). Use `--env` for that; `@use` only covers importing another
-  file's *response-derived* variables.
 - `@assert` forms beyond value/length/existence/schema (§7.1), e.g. full
   deep-equality against a JSON fixture, array-as-set comparisons ("contains
   exactly these elements, any order").

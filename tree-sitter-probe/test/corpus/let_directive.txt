@@ -1,0 +1,187 @@
+=================================================================
+let_directive: leading, file-scoped, string literal
+=================================================================
+@let apiVersion = "v2"
+
+GET /
+
+
+---
+
+(source_file
+  (let_directive
+    name: (identifier)
+    target: (let_value
+      (json_literal
+        (string))))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+let_directive: multiple leading directives
+=================================================================
+@let a = "x"
+@let b = 2
+
+GET /
+
+
+---
+
+(source_file
+  (let_directive
+    name: (identifier)
+    target: (let_value
+      (json_literal
+        (string))))
+  (let_directive
+    name: (identifier)
+    target: (let_value
+      (json_literal
+        (number))))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+let_directive: number literal
+=================================================================
+@let retries = 3
+
+GET /
+
+
+---
+
+(source_file
+  (let_directive
+    name: (identifier)
+    target: (let_value
+      (json_literal
+        (number))))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+let_directive: boolean and null literals
+=================================================================
+@let flag = true
+@let empty = null
+
+GET /
+
+
+---
+
+(source_file
+  (let_directive
+    name: (identifier)
+    target: (let_value
+      (json_literal)))
+  (let_directive
+    name: (identifier)
+    target: (let_value
+      (json_literal)))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+let_directive: interpolation value, copying/shadowing another variable
+=================================================================
+@let token = {{fallbackToken}}
+
+GET /
+
+
+---
+
+(source_file
+  (let_directive
+    name: (identifier)
+    target: (let_value
+      (interpolation
+        body: (interpolation_body
+          (value_reference
+            root: (identifier))))))
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))))
+
+=================================================================
+let_directive: request-scoped, interleaved with @save
+=================================================================
+GET /
+
+@save token = body.token
+@let apiVersion = "v2"
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                (path_accessor)
+                name: (identifier)))))))
+    (directive_line
+      (let_directive
+        name: (identifier)
+        target: (let_value
+          (json_literal
+            (string)))))))
+
+=================================================================
+let_directive: cannot read the response body
+:error
+=================================================================
+GET /
+
+@let x = body.token
+
+---
+
+=================================================================
+let_directive: cannot read status
+:error
+=================================================================
+GET /
+
+@let x = status
+
+---
+
+=================================================================
+let_directive: missing "=" is unparsed
+:error
+=================================================================
+GET /
+
+@let x "v2"
+
+---
+
+=================================================================
+let_directive: missing value is unparsed
+:error
+=================================================================
+GET /
+
+@let x =
+
+---

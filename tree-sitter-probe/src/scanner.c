@@ -6,7 +6,7 @@
 enum TokenType { OCTET_BODY };
 
 static const char *BOUNDARY_MARKERS[] = {"###",   "~~~",    "@assert",
-                                         "@save", "@field", "@file"};
+                                         "@save", "@field", "@file", "@let"};
 
 #define BOUNDARY_COUNT (sizeof(BOUNDARY_MARKERS) / sizeof(BOUNDARY_MARKERS[0]))
 
