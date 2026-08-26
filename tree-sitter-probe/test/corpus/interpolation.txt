@@ -1,0 +1,430 @@
+=================================================================
+a bare identifier interpolation in the request-target, with literal text around it
+=================================================================
+GET {{baseUrl}}/users HTTP/1.1
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target
+        (interpolation
+          body: (interpolation_body
+            (value_reference
+              root: (identifier)))))
+      version: (http_version
+        major: (digit)
+        minor: (digit)))))
+
+=================================================================
+a namespaced value_reference (alias.name)
+=================================================================
+GET {{auth.token}} HTTP/1.1
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target
+        (interpolation
+          body: (interpolation_body
+            (value_reference
+              root: (identifier)
+              accessor: (accessor
+                (member_access
+                  (path_accessor)
+                  name: (identifier)))))))
+      version: (http_version
+        major: (digit)
+        minor: (digit)))))
+
+=================================================================
+a util_reference (function call) as a field value
+=================================================================
+GET / HTTP/1.1
+X-Request-Id: {{uuid()}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (util_reference
+              util_name: (identifier))))))))
+
+=================================================================
+multiple interpolations within a single request-target
+=================================================================
+GET {{scheme}}://{{host}}/a HTTP/1.1
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target
+        (interpolation
+          body: (interpolation_body
+            (value_reference
+              root: (identifier))))
+        (interpolation
+          body: (interpolation_body
+            (value_reference
+              root: (identifier)))))
+      version: (http_version
+        major: (digit)
+        minor: (digit)))))
+
+=================================================================
+an interpolation surrounded by literal text within a field value
+=================================================================
+GET / HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (value_reference
+              root: (identifier))))))))
+
+=================================================================
+a single unmatched brace in the request-target is not treated as interpolation
+=================================================================
+GET /{path}/x HTTP/1.1
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))))
+
+=================================================================
+whitespace between the double braces and the interpolation body is an error
+:error
+=================================================================
+GET / HTTP/1.1
+X: {{ uuid() }}
+
+---
+
+=================================================================
+a util_reference with a single argument
+=================================================================
+GET / HTTP/1.1
+X: {{base64(value)}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (util_reference
+              util_name: (identifier)
+              (arguments
+                argument: (argument
+                  (value_reference
+                    root: (identifier)))))))))))
+
+=================================================================
+a util_reference with multiple arguments, including a namespaced one
+=================================================================
+GET / HTTP/1.1
+X: {{hmac_sha256(secret.key, body)}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (util_reference
+              util_name: (identifier)
+              (arguments
+                argument: (argument
+                  (value_reference
+                    root: (identifier)
+                    accessor: (accessor
+                      (member_access
+                        (path_accessor)
+                        name: (identifier)))))
+                argument: (argument
+                  (value_reference
+                    root: (identifier)))))))))))
+
+=================================================================
+a util_reference argument as a string literal
+=================================================================
+GET / HTTP/1.1
+X: {{now("iso8601")}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (util_reference
+              util_name: (identifier)
+              (arguments
+                argument: (argument
+                  (string))))))))))
+
+=================================================================
+a string argument containing an escaped double-quote
+=================================================================
+GET / HTTP/1.1
+X: {{now("a\"b")}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (util_reference
+              util_name: (identifier)
+              (arguments
+                argument: (argument
+                  (string))))))))))
+
+=================================================================
+a util_reference argument as a number literal, including a sign and exponent
+=================================================================
+GET / HTTP/1.1
+X: {{f(-1.5e10)}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (util_reference
+              util_name: (identifier)
+              (arguments
+                argument: (argument
+                  (number))))))))))
+
+=================================================================
+whitespace is allowed around the argument-separating comma
+=================================================================
+GET / HTTP/1.1
+X: {{hmac_sha256(a , b)}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (util_reference
+              util_name: (identifier)
+              (arguments
+                argument: (argument
+                  (value_reference
+                    root: (identifier)))
+                argument: (argument
+                  (value_reference
+                    root: (identifier)))))))))))
+
+=================================================================
+whitespace directly after the opening paren is an error
+:error
+=================================================================
+GET / HTTP/1.1
+X: {{base64( value)}}
+
+---
+
+=================================================================
+whitespace directly before the closing paren is an error
+:error
+=================================================================
+GET / HTTP/1.1
+X: {{base64(value )}}
+
+---
+
+=================================================================
+a trailing comma after the last argument is an error
+:error
+=================================================================
+GET / HTTP/1.1
+X: {{hmac_sha256(a, b,)}}
+
+---
+
+=================================================================
+empty parens containing only whitespace is an error
+:error
+=================================================================
+GET / HTTP/1.1
+X: {{now( )}}
+
+---
+
+=================================================================
+a nested function call is not allowed as an argument (v1 is non-composable)
+:error
+=================================================================
+GET / HTTP/1.1
+X: {{base64(now())}}
+
+---
+
+=================================================================
+empty interpolation braces are an error
+:error
+=================================================================
+GET {{}} HTTP/1.1
+
+---
+
+=================================================================
+an interpolation missing its closing double-brace is an error
+:error
+=================================================================
+GET {{baseUrl HTTP/1.1
+
+---
+
+=================================================================
+a value_reference with multiple accessors (a.b.c) is a deep path, not an error
+=================================================================
+GET / HTTP/1.1
+X: {{a.b.c}}
+
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target)
+      version: (http_version
+        major: (digit)
+        minor: (digit)))
+    (field_line
+      name: (field_name)
+      (field_value_seperator)
+      value: (field_value
+        (interpolation
+          body: (interpolation_body
+            (value_reference
+              root: (identifier)
+              accessor: (accessor
+                (member_access
+                  (path_accessor)
+                  name: (identifier)))
+              accessor: (accessor
+                (member_access
+                  (path_accessor)
+                  name: (identifier))))))))))

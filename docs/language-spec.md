@@ -1,4 +1,4 @@
-# Probe Language Specification (v0.4, Draft)
+# Probe Language Specification (v0.5, Draft)
 
 *This is the formal reference for the `.probe` file format: both its base
 HTTP syntax and its Probe-specific extensions.*
@@ -24,6 +24,16 @@ labeling/documentation job a `#` comment would have. `separator` is now
 also allowed (optionally) before a file's first request block, not just
 between blocks, so that first block can carry a label too. `~~~` teardown
 blocks (§5) are unaffected and unchanged.
+
+**v0.5 changes**: unified interpolation's dotted names and `@assert`'s
+`body.x.y[0]` targets under one `path`/`accessor` grammar (§6), instead of
+treating them as two independent dotted-path mechanisms. `{{alias.name}}`
+is now just the one-`accessor` case of `path`, rather than a special
+single-dot-only form; deeper chains (`{{a.b.c}}`) are syntactically valid
+wherever a `path` is, with resolution failures deferred to execution time
+like any other unresolved reference. `body-target` (§7.1) now reads as
+`path` rooted at `body` instead of restating the same chain grammar under
+`json-key`.
 
 ## 1. Notation
 
@@ -223,33 +233,45 @@ Authorization: Bearer {{token}}
 
 ```abnf
 interpolation = "{{" *SP interp-expr *SP "}}"
-interp-expr   = identifier / function-call
-identifier    = ALPHA *( ALPHA / DIGIT / "_" / "." )
+interp-expr   = path / function-call
+path          = identifier *accessor
+accessor      = "." identifier / "[" 1*DIGIT "]"
+identifier    = ALPHA *( ALPHA / DIGIT / "_" )
 function-call = fn-name "(" [ fn-arg *( *SP "," *SP fn-arg ) ] ")"
 fn-name       = "uuid" / "now" / "base64" / "hmac_sha256"
-fn-arg        = identifier / string / number
+fn-arg        = path / string / number
 ```
 
-`{{identifier}}` may appear anywhere in a request-target, header field-value,
-or message body. Dots in an `identifier` carry meaning in exactly one place:
-the `alias.name` form produced by an aliased `@use ... as alias` (§7.3).
-Everywhere else, including a bare identifier that happens to contain a dot
-because you named it that way, dots are just part of the name; there's no
-general dotted-path lookup into a variable's value (that's what `body.x.y`
-`assert-target` dot notation, §7.1, is for, and it's a separate grammar).
+`{{path}}` may appear anywhere in a request-target, header field-value, or
+message body. `path` is the one accessor-chain grammar used everywhere a
+value needs walking into by name or by index — it's the same `accessor`
+production `body-target` (§7.1) uses for `body.x.y[0]`, just rooted at a
+plain `identifier` instead of the literal `body`. There's deliberately no
+second, separate dotted-path notation: `{{auth.token}}`'s `.token` and
+`@assert`'s `body.token` are the same kind of step.
+
+A bare `identifier` (no accessors) resolves directly per the lookup order
+below. Each `accessor` after it — `.name` or `[index]` — walks one level
+into whatever the previous step resolved to; it's a **runtime** error (not
+a parse error) if that value isn't a structured value in the first place,
+or the key/index isn't present, the same way an unresolved bare identifier
+already is (see below). The `alias.name` form produced by an aliased `@use
+... as alias` (§7.3) is just the one-accessor case of this: `alias`
+resolves to that dependency's saved-value view, and `.name` looks a name up
+in it.
 
 `{{function-call()}}` computes a value at execution time instead of looking
-one up; arguments may themselves be `identifier`s (resolved per the order
-below before the function runs), not nested function calls. v1 keeps
-function calls non-composable to avoid needing a general expression grammar.
+one up; arguments may themselves be `path`s (resolved per the order below
+before the function runs), not nested function calls. v1 keeps function
+calls non-composable to avoid needing a general expression grammar.
 Built-in v1 functions:
 
 | Function | Args | Produces |
 |---|---|---|
 | `uuid()` | none | A random UUID v4 string |
 | `now()` / `now(format)` | optional format `string` | Current timestamp; ISO 8601 if `format` omitted |
-| `base64(value)` | `string` or identifier | Base64-encoded `value` |
-| `hmac_sha256(key, value)` | two `string`s or identifiers | Hex-encoded HMAC-SHA256, for signed-request headers |
+| `base64(value)` | `string` or `path` | Base64-encoded `value` |
+| `hmac_sha256(key, value)` | two `string`s or `path`s | Hex-encoded HMAC-SHA256, for signed-request headers |
 
 This set is deliberately small: it covers the recurring "idempotency key /
 timestamp header / signed request" cases. Additional functions are additive
@@ -270,9 +292,10 @@ timestamp header / signed request" cases. Additional functions are additive
 `function-call`s are evaluated fresh each time they're encountered; they
 don't participate in this lookup order themselves, only their arguments do.
 
-An unresolved `{{identifier}}`, or a `function-call` with an unresolvable
-argument, at execution time is a runtime error (not a parse error) that
-fails the containing request.
+An unresolved `{{path}}` — its root `identifier`, or any `accessor` step
+after it — or a `function-call` with an unresolvable argument, at execution
+time is a runtime error (not a parse error) that fails the containing
+request.
 
 ## 7. Directives
 
@@ -298,15 +321,16 @@ schema-assert     = "@assert" SP "body" SP "matches" SP "schema" SP quoted-path
 
 assert-target     = "status" / "duration" / header-target / body-target
 header-target     = "headers." field-name
-body-target       = "body" *( "." json-key / "[" 1*DIGIT "]" )
-json-key          = 1*( ALPHA / DIGIT / "_" )
+body-target       = "body" *accessor   ; accessor from §6's `path` grammar
 comparator        = "==" / "!=" / "<=" / ">=" / "<" / ">" / "contains" / "matches"
 assert-value      = json-literal / interpolation
 json-literal      = "null" / "true" / "false" / number / string
 ```
 
-- `body` targets use dot notation for object keys and bracket notation for
-  array indices, e.g. `body.user.id`, `body.items[0].name`.
+- `body-target` is `path` (§6) rooted at the literal `body` instead of an
+  `identifier` — the same accessor-chain grammar, not a second one. Dot
+  notation walks object keys, bracket notation walks array indices, e.g.
+  `body.user.id`, `body.items[0].name`.
 - `matches` (in `value-assert`) compares against a regular expression
   `string` value.
 - `length-assert` applies `comparator` to the element count of an array or
@@ -403,9 +427,11 @@ resolution-order tier 1 (§6), out of two sources: its own request-blocks'
 
 - **`@use "path" as alias`** (namespaced): the dependency's saved values are
   reachable *only* as `{{alias.name}}`, never as bare `{{name}}`. This is
-  the only place in the grammar a dotted `identifier` is meaningful (§6).
-  Namespacing is local to the importing file; it doesn't rename anything
-  inside the dependency itself, and it doesn't propagate: if that dependency
+  the one-`accessor` case of the general `path` grammar (§6) — `alias`
+  resolves to the dependency's view, `.name` looks a name up in it, same
+  as any other accessor step. Namespacing is local to the importing file;
+  it doesn't rename anything inside the dependency itself, and it doesn't
+  propagate: if that dependency
   has its own `@use`s, *their* names aren't re-exposed through `alias.*`
   unless the dependency chooses to re-export them (not a v1 concept; see
   §11).
@@ -484,18 +510,19 @@ schema-assert     = "@assert" SP "body" SP "matches" SP "schema" SP quoted-path
 save-directive    = "@save" SP identifier SP "=" SP assert-target
 assert-target     = "status" / "duration" / header-target / body-target
 header-target     = "headers." field-name
-body-target       = "body" *( "." json-key / "[" 1*DIGIT "]" )
+body-target       = "body" *accessor
 comparator        = "==" / "!=" / "<=" / ">=" / "<" / ">" / "contains" / "matches"
 assert-value      = json-literal / interpolation
 json-literal      = "null" / "true" / "false" / number / string
-json-key          = 1*( ALPHA / DIGIT / "_" )
 
 interpolation     = "{{" *SP interp-expr *SP "}}"
-interp-expr       = identifier / function-call
-identifier        = ALPHA *( ALPHA / DIGIT / "_" / "." )
+interp-expr       = path / function-call
+path              = identifier *accessor
+accessor          = "." identifier / "[" 1*DIGIT "]"
+identifier        = ALPHA *( ALPHA / DIGIT / "_" )
 function-call     = fn-name "(" [ fn-arg *( *SP "," *SP fn-arg ) ] ")"
 fn-name           = "uuid" / "now" / "base64" / "hmac_sha256"
-fn-arg            = identifier / string / number
+fn-arg            = path / string / number
 
 line-ending       = CRLF / LF
 ```
@@ -590,7 +617,7 @@ makes `{{token}}` available; no separate invocation needed.
 - Chaining more than one teardown block per request-block (§5), and
   file-level (as opposed to request-level) teardown.
 - Composable/nested function calls in interpolation (§6): v1's
-  `function-call` args are limited to `identifier`/literal, not another
+  `function-call` args are limited to `path`/literal, not another
   `function-call`.
 - Operational features that don't affect this document's grammar:
   data-driven runs, retries, cookie jars, importing from other tools, and

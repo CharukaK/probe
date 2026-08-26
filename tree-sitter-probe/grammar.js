@@ -31,9 +31,41 @@ module.exports = grammar({
     // --- Low-level primitives ---
     _line_ending: _ => choice('\r\n', '\n'),
     _wsp: _ => /[ \t]/,
+    _comma: _ => ',',
+    _double_qoute: _ => '"',
+    _double_brace_start: _ => '{{',
+    _double_brace_end: _ => '}}',
+    _util_call_start: _ => '(',
+    _util_call_end: _ => ')',
+    identifier: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
     _octet: _ => /[\s\S]/,
     digit: _ => /[0-9]/,
     octet_body: $ => $._octet_body,
+    path_accessor: _ => '.',
+    _target_run: _ => /[!-z|-~]+/,
+    _value_run: _ => /[!-z|-~ \t]+/,
+    _lone_brace: _ => '{',
+    _string_content: _ => token.immediate(prec(1, /[^"\\]+/)),
+    _escape_sequence: _ => token.immediate(seq(
+      '\\',
+      choice(/["\\/bfnrt]/, seq('u', /[0-9a-fA-F]{4}/))
+    )),
+    string: $ => seq(
+      $._double_qoute,
+      repeat(choice($._string_content, $._escape_sequence)),
+      $._double_qoute
+    ),
+    number: _ => /-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?/,
+    argument: $ => choice($.value_reference, $.string, $.number),
+    arguments: $ => seq(
+      field('argument', $.argument),
+      repeat(seq(
+        repeat($._wsp),
+        $._comma,
+        repeat($._wsp),
+        field('argument', $.argument)
+      ))
+    ),
 
     // --- Lexical tokens ---
     seprator: $ => seq(
@@ -43,13 +75,42 @@ module.exports = grammar({
     ),
     request_name: _ => /[ -~]+/,
     method: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    request_target: _ => /[!-~]+/, // capture the token
+    request_target: $ => repeat1(choice($.interpolation, $._target_run, $._lone_brace)), // capture the token
     field_name: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    field_value: _ => /[!-~]+(?:[ \t]+[!-~]+)*/,
+    field_value: $ => repeat1(choice($.interpolation, $._value_run, $._lone_brace)),
     field_value_seperator: _ => ':',
     multipart_part: $ => seq(choice('@field', '@file'), /[^\r\n]*/, $._line_ending),
     multipart_body: $ => repeat1($.multipart_part),
     message_body: $ => choice($.multipart_body, $.octet_body),
+    // A chain of accessors walking into a value, root-first. This is the
+    // one building block for every dotted/indexed path in the language:
+    // {{alias.name}} today, and later @assert's `body.x.y[0]` target
+    // (docs/language-spec.md §7.1) reuses `accessor` unchanged, rooted at
+    // the literal `body` instead of an `identifier`, plus an
+    // `index_access` alternative added to the choice below.
+    member_access: $ => seq(
+      $.path_accessor,
+      field('name', $.identifier),
+    ),
+    accessor: $ => choice($.member_access),
+    value_reference: $ => seq(
+      field('root', $.identifier),
+      repeat(field('accessor', $.accessor)),
+    ),
+    util_reference: $ => seq(
+      field('util_name', $.identifier),
+      $._util_call_start,
+      optional($.arguments),
+      $._util_call_end,
+    ),
+    interpolation_body: $ => choice($.value_reference, $.util_reference),
+    interpolation: $ => seq(
+      $._double_brace_start,
+      repeat($._wsp),
+      field('body', $.interpolation_body),
+      repeat($._wsp),
+      $._double_brace_end
+    ),
 
     http_version: $ => seq(
       'HTTP/',
