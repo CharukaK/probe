@@ -2,7 +2,6 @@ package parser
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	ts_probe "github.com/charukak/probe/tree-sitter-probe/bindings/go"
