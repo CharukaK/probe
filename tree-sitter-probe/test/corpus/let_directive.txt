@@ -137,7 +137,6 @@ GET /
           (body_target
             accessor: (accessor
               (member_access
-                (path_accessor)
                 name: (identifier)))))))
     (directive_line
       (let_directive
@@ -156,6 +155,8 @@ GET /
 
 ---
 
+
+
 =================================================================
 let_directive: cannot read status
 :error
@@ -165,6 +166,8 @@ GET /
 @let x = status
 
 ---
+
+
 
 =================================================================
 let_directive: missing "=" is unparsed
@@ -176,6 +179,8 @@ GET /
 
 ---
 
+
+
 =================================================================
 let_directive: missing value is unparsed
 :error
@@ -185,3 +190,5 @@ GET /
 @let x =
 
 ---
+
+

@@ -38,7 +38,6 @@ GET {{auth.token}} HTTP/1.1
               root: (identifier)
               accessor: (accessor
                 (member_access
-                  (path_accessor)
                   name: (identifier)))))))
       version: (http_version
         major: (digit)
@@ -147,6 +146,8 @@ X: {{ uuid() }}
 
 ---
 
+
+
 =================================================================
 a util_reference with a single argument
 =================================================================
@@ -208,7 +209,6 @@ X: {{hmac_sha256(secret.key, body)}}
                     root: (identifier)
                     accessor: (accessor
                       (member_access
-                        (path_accessor)
                         name: (identifier)))))
                 argument: (argument
                   (value_reference
@@ -343,6 +343,8 @@ X: {{base64( value)}}
 
 ---
 
+
+
 =================================================================
 whitespace directly before the closing paren is an error
 :error
@@ -351,6 +353,8 @@ GET / HTTP/1.1
 X: {{base64(value )}}
 
 ---
+
+
 
 =================================================================
 a trailing comma after the last argument is an error
@@ -361,6 +365,8 @@ X: {{hmac_sha256(a, b,)}}
 
 ---
 
+
+
 =================================================================
 empty parens containing only whitespace is an error
 :error
@@ -369,6 +375,8 @@ GET / HTTP/1.1
 X: {{now( )}}
 
 ---
+
+
 
 =================================================================
 a nested function call is not allowed as an argument (v1 is non-composable)
@@ -379,6 +387,8 @@ X: {{base64(now())}}
 
 ---
 
+
+
 =================================================================
 empty interpolation braces are an error
 :error
@@ -387,6 +397,8 @@ GET {{}} HTTP/1.1
 
 ---
 
+
+
 =================================================================
 an interpolation missing its closing double-brace is an error
 :error
@@ -394,6 +406,8 @@ an interpolation missing its closing double-brace is an error
 GET {{baseUrl HTTP/1.1
 
 ---
+
+
 
 =================================================================
 a value_reference with multiple accessors (a.b.c) is a deep path, not an error
@@ -422,9 +436,7 @@ X: {{a.b.c}}
               root: (identifier)
               accessor: (accessor
                 (member_access
-                  (path_accessor)
                   name: (identifier)))
               accessor: (accessor
                 (member_access
-                  (path_accessor)
                   name: (identifier))))))))))

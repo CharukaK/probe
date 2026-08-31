@@ -177,16 +177,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "path_accessor",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -328,16 +318,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "path_accessor",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -386,11 +366,6 @@
   },
   {
     "type": "octet_body",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "path_accessor",
     "named": true,
     "fields": {}
   },

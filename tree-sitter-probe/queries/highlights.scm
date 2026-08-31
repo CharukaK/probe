@@ -19,7 +19,7 @@
 
 (value_reference root: (identifier) @variable)
 (member_access name: (identifier) @property)
-(path_accessor) @punctuation.delimiter
+"." @punctuation.delimiter
 
 (util_reference util_name: (identifier) @function.builtin)
 (util_reference "(" @punctuation.bracket)
