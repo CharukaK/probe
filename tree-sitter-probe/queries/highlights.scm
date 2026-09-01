@@ -21,6 +21,11 @@
 (member_access name: (identifier) @property)
 "." @punctuation.delimiter
 
+(index_access "[" @punctuation.bracket)
+(index_access "]" @punctuation.bracket)
+(index_access index: (number) @number)
+(index_access index: (string) @string)
+
 (util_reference util_name: (identifier) @function.builtin)
 (util_reference "(" @punctuation.bracket)
 (util_reference ")" @punctuation.bracket)

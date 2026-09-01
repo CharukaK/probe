@@ -429,12 +429,46 @@
         }
       ]
     },
+    "index_access": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "FIELD",
+          "name": "index",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "number"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "string"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
     "accessor": {
       "type": "CHOICE",
       "members": [
         {
           "type": "SYMBOL",
           "name": "member_access"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "index_access"
         }
       ]
     },

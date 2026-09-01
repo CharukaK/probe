@@ -68,6 +68,120 @@ GET /
                 name: (identifier)))))))))
 
 =================================================================
+save_directive: single-digit index access
+=================================================================
+GET /
+
+@save first = body.items[0]
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))
+            accessor: (accessor
+              (index_access
+                index: (number)))))))))
+
+=================================================================
+save_directive: multi-digit index access
+=================================================================
+GET /
+
+@save tenth = body.items[10]
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))
+            accessor: (accessor
+              (index_access
+                index: (number)))))))))
+
+=================================================================
+save_directive: string-key index access
+=================================================================
+GET /
+
+@save id = body["user-id"]
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (index_access
+                index: (string)))))))))
+
+=================================================================
+save_directive: chained member and index accessors
+=================================================================
+GET /
+
+@save name = body.items[0].name
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (save_directive
+        name: (identifier)
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))
+            accessor: (accessor
+              (index_access
+                index: (number)))
+            accessor: (accessor
+              (member_access
+                name: (identifier)))))))))
+
+=================================================================
+save_directive: index access with missing closing bracket is unparsed
+:error
+=================================================================
+GET /
+
+@save first = body.items[0
+
+---
+
+=================================================================
 save_directive: header target
 =================================================================
 GET /

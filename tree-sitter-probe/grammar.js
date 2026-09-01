@@ -88,7 +88,12 @@ module.exports = grammar({
       '.',
       field('name', $.identifier),
     ),
-    accessor: $ => choice($.member_access),
+    index_access: $ => seq(
+      '[',
+      field('index', choice($.number, $.string)),
+      ']'
+    ),
+    accessor: $ => choice($.member_access, $.index_access),
     value_reference: $ => seq(
       field('root', $.identifier),
       repeat(field('accessor', $.accessor)),

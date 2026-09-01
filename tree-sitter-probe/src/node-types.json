@@ -8,6 +8,10 @@
       "required": true,
       "types": [
         {
+          "type": "index_access",
+          "named": true
+        },
+        {
           "type": "member_access",
           "named": true
         }
@@ -199,6 +203,26 @@
         "types": [
           {
             "type": "digit",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "index_access",
+    "named": true,
+    "fields": {
+      "index": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           }
         ]
@@ -624,6 +648,14 @@
   },
   {
     "type": "HTTP/",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
     "named": false
   },
   {
