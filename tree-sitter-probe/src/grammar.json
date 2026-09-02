@@ -127,6 +127,39 @@
       "type": "PATTERN",
       "value": "[!-z|-~ \\t]+"
     },
+    "comparator_operator": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "=="
+        },
+        {
+          "type": "STRING",
+          "value": "<"
+        },
+        {
+          "type": "STRING",
+          "value": "<="
+        },
+        {
+          "type": "STRING",
+          "value": "=>"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        },
+        {
+          "type": "STRING",
+          "value": "contains"
+        },
+        {
+          "type": "STRING",
+          "value": "matches"
+        }
+      ]
+    },
     "_string_content": {
       "type": "IMMEDIATE_TOKEN",
       "content": {
@@ -799,6 +832,71 @@
         }
       ]
     },
+    "assert_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@assert"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_wsp"
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "assert_target"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_wsp"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "comparator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comparator_operator"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_wsp"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "let_value"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_line_ending"
+        }
+      ]
+    },
     "directive_line": {
       "type": "CHOICE",
       "members": [
@@ -809,6 +907,10 @@
         {
           "type": "SYMBOL",
           "name": "let_directive"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "assert_directive"
         }
       ]
     },

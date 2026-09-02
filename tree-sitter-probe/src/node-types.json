@@ -58,6 +58,36 @@
     }
   },
   {
+    "type": "assert_directive",
+    "named": true,
+    "fields": {
+      "comparator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "comparator_operator",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "assert_target",
+            "named": true
+          },
+          {
+            "type": "let_value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "assert_target",
     "named": true,
     "fields": {},
@@ -93,6 +123,11 @@
     }
   },
   {
+    "type": "comparator_operator",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "directive_line",
     "named": true,
     "fields": {},
@@ -100,6 +135,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "assert_directive",
+          "named": true
+        },
         {
           "type": "let_directive",
           "named": true
@@ -627,7 +666,31 @@
     "named": false
   },
   {
+    "type": "<",
+    "named": false
+  },
+  {
+    "type": "<=",
+    "named": false
+  },
+  {
     "type": "=",
+    "named": false
+  },
+  {
+    "type": "==",
+    "named": false
+  },
+  {
+    "type": "=>",
+    "named": false
+  },
+  {
+    "type": ">",
+    "named": false
+  },
+  {
+    "type": "@assert",
     "named": false
   },
   {
@@ -663,6 +726,10 @@
     "named": false
   },
   {
+    "type": "contains",
+    "named": false
+  },
+  {
     "type": "digit",
     "named": true
   },
@@ -685,6 +752,10 @@
   {
     "type": "identifier",
     "named": true
+  },
+  {
+    "type": "matches",
+    "named": false
   },
   {
     "type": "null",

@@ -1,0 +1,295 @@
+=================================================================
+assert_directive: status equality with number
+=================================================================
+GET /
+
+@assert status == 200
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target)
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal
+            (number)))))))
+
+=================================================================
+assert_directive: duration less-than
+=================================================================
+GET /
+
+@assert duration < 500
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target)
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal
+            (number)))))))
+
+=================================================================
+assert_directive: header target with string value
+=================================================================
+GET /
+
+@assert headers.Content-Type == "application/json"
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (header_target
+            name: (field_name)))
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal
+            (string)))))))
+
+=================================================================
+assert_directive: body target with member access and null
+=================================================================
+GET /
+
+@assert body.id == null
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))))
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal))))))
+
+=================================================================
+assert_directive: body target with index access
+=================================================================
+GET /
+
+@assert body.items[0] == "first"
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))
+            accessor: (accessor
+              (index_access
+                index: (number)))))
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal
+            (string)))))))
+
+=================================================================
+assert_directive: chained member and index accessors with contains
+=================================================================
+GET /
+
+@assert body.items[0].name contains "user"
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))
+            accessor: (accessor
+              (index_access
+                index: (number)))
+            accessor: (accessor
+              (member_access
+                name: (identifier)))))
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal
+            (string)))))))
+
+=================================================================
+assert_directive: matches comparator with regex string
+=================================================================
+GET /
+
+@assert body.email matches "^user-"
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))))
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal
+            (string)))))))
+
+=================================================================
+assert_directive: interpolation value on the right-hand side
+=================================================================
+GET /
+
+@assert body.id == {{expectedId}}
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))))
+        comparator: (comparator_operator)
+        target: (let_value
+          (interpolation
+            body: (interpolation_body
+              (value_reference
+                root: (identifier)))))))))
+
+=================================================================
+assert_directive: boolean literal value
+=================================================================
+GET /
+
+@assert body.ok == true
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))))
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal))))))
+
+=================================================================
+assert_directive: two directives in one block
+=================================================================
+GET /
+
+@assert status == 200
+@assert body.id == null
+
+---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (directive_line
+      (assert_directive
+        target: (assert_target)
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal
+            (number)))))
+    (directive_line
+      (assert_directive
+        target: (assert_target
+          (body_target
+            accessor: (accessor
+              (member_access
+                name: (identifier)))))
+        comparator: (comparator_operator)
+        target: (let_value
+          (json_literal))))))
+
+=================================================================
+assert_directive: missing comparator is unparsed
+:error
+=================================================================
+GET /
+
+@assert status 200
+
+---
+
+=================================================================
+assert_directive: missing value is unparsed
+:error
+=================================================================
+GET /
+
+@assert status ==
+
+---
+
+=================================================================
+assert_directive: no trailing line ending at EOF is unparsed
+:error
+=================================================================
+GET /
+
+@assert status == 200
+---
+

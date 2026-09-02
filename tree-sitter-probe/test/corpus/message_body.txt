@@ -203,14 +203,21 @@ hello
 
 
 =================================================================
-plain body content immediately followed by an @assert directive is unparsed
-:error
+plain body content immediately followed by an unrecognized @-directive is still body text
 =================================================================
 GET /
 
 hello
-@assert status == 200
+@foo bar baz
 
 ---
+
+(source_file
+  (request_block
+    (request_line
+      method: (method)
+      target: (request_target))
+    (message_body
+      (octet_body))))
 
 

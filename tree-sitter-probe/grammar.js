@@ -40,6 +40,7 @@ module.exports = grammar({
 
     _target_run: _ => /[!-z|-~]+/,
     _value_run: _ => /[!-z|-~ \t]+/,
+    comparator_operator: _ => choice('==', '<', '<=', '=>', '>', 'contains', 'matches'),
 
     _string_content: _ => token.immediate(prec(1, /[^"\\]+/)),
     _escape_sequence: _ => token.immediate(seq(
@@ -101,6 +102,7 @@ module.exports = grammar({
     header_target: $ => seq('headers', '.', field('name', $.field_name)),
     body_target: $ => seq('body', repeat(field('accessor', $.accessor))),
     assert_target: $ => choice('status', 'duration', $.header_target, $.body_target),
+
     util_reference: $ => seq(
       field('util_name', $.identifier),
       '(',
@@ -137,7 +139,17 @@ module.exports = grammar({
       field('target', $.let_value),
       $._line_ending
     ),
-    directive_line: $ => choice($.save_directive, $.let_directive),
+    assert_directive: $ => seq(
+      '@assert',
+      $._wsp,
+      field('target', $.assert_target),
+      optional($._wsp),
+      field('comparator', $.comparator_operator),
+      optional($._wsp),
+      field('target', $.let_value),
+      $._line_ending
+    ),
+    directive_line: $ => choice($.save_directive, $.let_directive, $.assert_directive),
 
     http_version: $ => seq(
       'HTTP/',
