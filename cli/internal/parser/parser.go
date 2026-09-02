@@ -11,18 +11,60 @@ import (
 type NodeKind string
 
 const (
+	// Entry / structural
+	SourceFileNodeKind   NodeKind = "source_file"
+	SeparatorNodeKind    NodeKind = "seprator"
 	RequestBlockNodeKind NodeKind = "request_block"
 	RequestLineKind      NodeKind = "request_line"
-	RequestMethodKind    NodeKind = "method"
-	RequestTargetKind    NodeKind = "request_target"
-	RequestVersionKind   NodeKind = "http_version"
-	FieldLineKind        NodeKind = "field_line"
-	FieldNameKind        NodeKind = "field_name"
-	FieldValueKind       NodeKind = "field_value"
-	MessageBodyKind      NodeKind = "message_body"
-	OctetBodyKind        NodeKind = "octet_body"
-	MultipartBodyKind    NodeKind = "multipart_body"
-	MultipartPartKind    NodeKind = "multipart_part"
+
+	// Request line components
+	RequestMethodKind  NodeKind = "method"
+	RequestTargetKind  NodeKind = "request_target"
+	RequestVersionKind NodeKind = "http_version"
+	RequestNameKind    NodeKind = "request_name"
+
+	// Headers
+	FieldLineKind           NodeKind = "field_line"
+	FieldNameKind           NodeKind = "field_name"
+	FieldValueKind          NodeKind = "field_value"
+	FieldValueSeparatorKind NodeKind = "field_value_seperator"
+
+	// Body
+	MessageBodyKind   NodeKind = "message_body"
+	OctetBodyKind     NodeKind = "octet_body"
+	MultipartBodyKind NodeKind = "multipart_body"
+	MultipartPartKind NodeKind = "multipart_part"
+
+	// Directives
+	DirectiveLineKind   NodeKind = "directive_line"
+	SaveDirectiveKind   NodeKind = "save_directive"
+	LetDirectiveKind    NodeKind = "let_directive"
+	AssertDirectiveKind NodeKind = "assert_directive"
+
+	// Interpolation / values
+	InterpolationKind     NodeKind = "interpolation"
+	InterpolationBodyKind NodeKind = "interpolation_body"
+	ValueReferenceKind    NodeKind = "value_reference"
+	UtilReferenceKind     NodeKind = "util_reference"
+	AccessorKind          NodeKind = "accessor"
+	MemberAccessKind      NodeKind = "member_access"
+	IndexAccessKind      NodeKind = "index_access"
+
+	// Assert targets
+	AssertTargetKind NodeKind = "assert_target"
+	HeaderTargetKind NodeKind = "header_target"
+	BodyTargetKind   NodeKind = "body_target"
+
+	// Literals / primitives
+	JSONLiteralKind        NodeKind = "json_literal"
+	LetValueKind           NodeKind = "let_value"
+	IdentifierKind         NodeKind = "identifier"
+	StringKind             NodeKind = "string"
+	NumberKind             NodeKind = "number"
+	ArgumentKind           NodeKind = "argument"
+	ArgumentsKind          NodeKind = "arguments"
+	ComparatorOperatorKind NodeKind = "comparator_operator"
+	DigitKind              NodeKind = "digit"
 )
 
 var ErrFailedtoParseCode = errors.New("failed to parse code")
