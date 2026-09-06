@@ -2,11 +2,14 @@ GO ?= go
 BINARY := probe
 CMD_DIR := ./cmd/probe
 
-.PHONY: all build run test vet fmt tidy clean
+.PHONY: all build generate run test vet fmt tidy clean
 
 all: build
 
-build:
+generate:
+	$(GO) generate ./internal/parser/...
+
+build: generate
 	$(GO) build -o build/$(BINARY) $(CMD_DIR)
 
 run: build
