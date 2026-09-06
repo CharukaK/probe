@@ -34,7 +34,6 @@ module.exports = grammar({
     _wsp: _ => /[ \t]/,
 
     identifier: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
-    _octet: _ => /[\s\S]/,
     digit: _ => /[0-9]/,
     octet_body: $ => $._octet_body,
 
