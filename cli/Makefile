@@ -8,6 +8,7 @@ all: build
 
 generate:
 	$(GO) generate ./internal/parser/...
+	$(GO) fmt ./internal/parser/...
 
 build: generate
 	$(GO) build -o build/$(BINARY) $(CMD_DIR)

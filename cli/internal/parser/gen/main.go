@@ -73,8 +73,7 @@ import ts "github.com/tree-sitter/go-tree-sitter"
 type NodeKind string
 
 const (
-{{range .Nodes}}
-	{{.KindName}} NodeKind = "{{.Type}}"
+{{range .Nodes}}    {{.KindName}} NodeKind = "{{.Type}}"
 {{end}}
 )
 

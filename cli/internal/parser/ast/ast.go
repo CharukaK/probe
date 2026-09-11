@@ -7,87 +7,46 @@ import ts "github.com/tree-sitter/go-tree-sitter"
 type NodeKind string
 
 const (
-
-	AccessorKind NodeKind = "accessor"
-
-	ArgumentKind NodeKind = "argument"
-
-	ArgumentsKind NodeKind = "arguments"
-
-	AssertDirectiveKind NodeKind = "assert_directive"
-
-	AssertTargetKind NodeKind = "assert_target"
-
-	BodyTargetKind NodeKind = "body_target"
-
-	ComparatorOperatorKind NodeKind = "comparator_operator"
-
-	DigitKind NodeKind = "digit"
-
-	DirectiveLineKind NodeKind = "directive_line"
-
-	FieldLineKind NodeKind = "field_line"
-
-	FieldNameKind NodeKind = "field_name"
-
-	FieldValueKind NodeKind = "field_value"
-
+	AccessorKind            NodeKind = "accessor"
+	ArgumentKind            NodeKind = "argument"
+	ArgumentsKind           NodeKind = "arguments"
+	AssertDirectiveKind     NodeKind = "assert_directive"
+	AssertTargetKind        NodeKind = "assert_target"
+	BodyTargetKind          NodeKind = "body_target"
+	ComparatorOperatorKind  NodeKind = "comparator_operator"
+	DigitKind               NodeKind = "digit"
+	DirectiveLineKind       NodeKind = "directive_line"
+	FieldLineKind           NodeKind = "field_line"
+	FieldNameKind           NodeKind = "field_name"
+	FieldValueKind          NodeKind = "field_value"
 	FieldValueSeperatorKind NodeKind = "field_value_seperator"
-
-	HeaderTargetKind NodeKind = "header_target"
-
-	HttpVersionKind NodeKind = "http_version"
-
-	IdentifierKind NodeKind = "identifier"
-
-	IndexAccessKind NodeKind = "index_access"
-
-	InterpolationKind NodeKind = "interpolation"
-
-	InterpolationBodyKind NodeKind = "interpolation_body"
-
-	JsonLiteralKind NodeKind = "json_literal"
-
-	LetDirectiveKind NodeKind = "let_directive"
-
-	LetValueKind NodeKind = "let_value"
-
-	MemberAccessKind NodeKind = "member_access"
-
-	MessageBodyKind NodeKind = "message_body"
-
-	MethodKind NodeKind = "method"
-
-	MultipartBodyKind NodeKind = "multipart_body"
-
-	MultipartPartKind NodeKind = "multipart_part"
-
-	NumberKind NodeKind = "number"
-
-	OctetBodyKind NodeKind = "octet_body"
-
-	RequestBlockKind NodeKind = "request_block"
-
-	RequestLineKind NodeKind = "request_line"
-
-	RequestNameKind NodeKind = "request_name"
-
-	RequestTargetKind NodeKind = "request_target"
-
-	SaveDirectiveKind NodeKind = "save_directive"
-
-	SepratorKind NodeKind = "seprator"
-
-	SourceFileKind NodeKind = "source_file"
-
-	StringKind NodeKind = "string"
-
-	UtilReferenceKind NodeKind = "util_reference"
-
-	ValueReferenceKind NodeKind = "value_reference"
-
+	HeaderTargetKind        NodeKind = "header_target"
+	HttpVersionKind         NodeKind = "http_version"
+	IdentifierKind          NodeKind = "identifier"
+	IndexAccessKind         NodeKind = "index_access"
+	InterpolationKind       NodeKind = "interpolation"
+	InterpolationBodyKind   NodeKind = "interpolation_body"
+	JsonLiteralKind         NodeKind = "json_literal"
+	LetDirectiveKind        NodeKind = "let_directive"
+	LetValueKind            NodeKind = "let_value"
+	MemberAccessKind        NodeKind = "member_access"
+	MessageBodyKind         NodeKind = "message_body"
+	MethodKind              NodeKind = "method"
+	MultipartBodyKind       NodeKind = "multipart_body"
+	MultipartPartKind       NodeKind = "multipart_part"
+	NumberKind              NodeKind = "number"
+	OctetBodyKind           NodeKind = "octet_body"
+	RequestBlockKind        NodeKind = "request_block"
+	RequestLineKind         NodeKind = "request_line"
+	RequestNameKind         NodeKind = "request_name"
+	RequestTargetKind       NodeKind = "request_target"
+	SaveDirectiveKind       NodeKind = "save_directive"
+	SepratorKind            NodeKind = "seprator"
+	SourceFileKind          NodeKind = "source_file"
+	StringKind              NodeKind = "string"
+	UtilReferenceKind       NodeKind = "util_reference"
+	ValueReferenceKind      NodeKind = "value_reference"
 )
-
 
 // AccessorNode represents a accessor node.
 type AccessorNode struct {
@@ -101,15 +60,15 @@ type ArgumentNode struct {
 
 // ArgumentsNode represents a arguments node.
 type ArgumentsNode struct {
-	TSNode *ts.Node
+	TSNode   *ts.Node
 	Argument []*ArgumentNode // field: argument
 }
 
 // AssertDirectiveNode represents a assert_directive node.
 type AssertDirectiveNode struct {
-	TSNode *ts.Node
+	TSNode     *ts.Node
 	Comparator *ComparatorOperatorNode // field: comparator
-	Target []*ts.Node // field: target
+	Target     []*ts.Node              // field: target
 }
 
 // AssertTargetNode represents a assert_target node.
@@ -119,7 +78,7 @@ type AssertTargetNode struct {
 
 // BodyTargetNode represents a body_target node.
 type BodyTargetNode struct {
-	TSNode *ts.Node
+	TSNode   *ts.Node
 	Accessor []*AccessorNode // field: accessor
 }
 
@@ -141,8 +100,8 @@ type DirectiveLineNode struct {
 // FieldLineNode represents a field_line node.
 type FieldLineNode struct {
 	TSNode *ts.Node
-	Name *FieldNameNode // field: name
-	Value *FieldValueNode // field: value
+	Name   *FieldNameNode  // field: name
+	Value  *FieldValueNode // field: value
 }
 
 // FieldNameNode represents a field_name node.
@@ -163,14 +122,14 @@ type FieldValueSeperatorNode struct {
 // HeaderTargetNode represents a header_target node.
 type HeaderTargetNode struct {
 	TSNode *ts.Node
-	Name *FieldNameNode // field: name
+	Name   *FieldNameNode // field: name
 }
 
 // HttpVersionNode represents a http_version node.
 type HttpVersionNode struct {
 	TSNode *ts.Node
-	Major *DigitNode // field: major
-	Minor *DigitNode // field: minor
+	Major  *DigitNode // field: major
+	Minor  *DigitNode // field: minor
 }
 
 // IdentifierNode represents a identifier node.
@@ -181,13 +140,13 @@ type IdentifierNode struct {
 // IndexAccessNode represents a index_access node.
 type IndexAccessNode struct {
 	TSNode *ts.Node
-	Index *ts.Node // field: index
+	Index  *ts.Node // field: index
 }
 
 // InterpolationNode represents a interpolation node.
 type InterpolationNode struct {
 	TSNode *ts.Node
-	Body *InterpolationBodyNode // field: body
+	Body   *InterpolationBodyNode // field: body
 }
 
 // InterpolationBodyNode represents a interpolation_body node.
@@ -203,8 +162,8 @@ type JsonLiteralNode struct {
 // LetDirectiveNode represents a let_directive node.
 type LetDirectiveNode struct {
 	TSNode *ts.Node
-	Name *IdentifierNode // field: name
-	Target *LetValueNode // field: target
+	Name   *IdentifierNode // field: name
+	Target *LetValueNode   // field: target
 }
 
 // LetValueNode represents a let_value node.
@@ -215,7 +174,7 @@ type LetValueNode struct {
 // MemberAccessNode represents a member_access node.
 type MemberAccessNode struct {
 	TSNode *ts.Node
-	Name *IdentifierNode // field: name
+	Name   *IdentifierNode // field: name
 }
 
 // MessageBodyNode represents a message_body node.
@@ -255,10 +214,10 @@ type RequestBlockNode struct {
 
 // RequestLineNode represents a request_line node.
 type RequestLineNode struct {
-	TSNode *ts.Node
-	Method *MethodNode // field: method
-	Target *RequestTargetNode // field: target
-	Version *HttpVersionNode // field: version
+	TSNode  *ts.Node
+	Method  *MethodNode        // field: method
+	Target  *RequestTargetNode // field: target
+	Version *HttpVersionNode   // field: version
 }
 
 // RequestNameNode represents a request_name node.
@@ -274,14 +233,14 @@ type RequestTargetNode struct {
 // SaveDirectiveNode represents a save_directive node.
 type SaveDirectiveNode struct {
 	TSNode *ts.Node
-	Name *IdentifierNode // field: name
+	Name   *IdentifierNode   // field: name
 	Target *AssertTargetNode // field: target
 }
 
 // SepratorNode represents a seprator node.
 type SepratorNode struct {
 	TSNode *ts.Node
-	Name *RequestNameNode // field: name
+	Name   *RequestNameNode // field: name
 }
 
 // SourceFileNode represents a source_file node.
@@ -296,14 +255,13 @@ type StringNode struct {
 
 // UtilReferenceNode represents a util_reference node.
 type UtilReferenceNode struct {
-	TSNode *ts.Node
+	TSNode   *ts.Node
 	UtilName *IdentifierNode // field: util_name
 }
 
 // ValueReferenceNode represents a value_reference node.
 type ValueReferenceNode struct {
-	TSNode *ts.Node
+	TSNode   *ts.Node
 	Accessor []*AccessorNode // field: accessor
-	Root *IdentifierNode // field: root
+	Root     *IdentifierNode // field: root
 }
-
