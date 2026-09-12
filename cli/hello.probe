@@ -1,6 +1,7 @@
+@let yo = "world"
+
 GET /hello/{{yo}}
 Content-Type: application/json
 
 @file hehe ./yoyo
 @field hehe he
-

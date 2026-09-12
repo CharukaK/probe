@@ -9,13 +9,13 @@ GET /
 ---
 
 (source_file
-  (let_directive
+  let: (let_directive
     name: (identifier)
     target: (let_value
-      (json_literal
-        (string))))
-  (request_block
-    (request_line
+      value: (json_literal
+        value: (string))))
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -31,18 +31,18 @@ GET /
 ---
 
 (source_file
-  (let_directive
+  let: (let_directive
     name: (identifier)
     target: (let_value
-      (json_literal
-        (string))))
-  (let_directive
+      value: (json_literal
+        value: (string))))
+  let: (let_directive
     name: (identifier)
     target: (let_value
-      (json_literal
-        (number))))
-  (request_block
-    (request_line
+      value: (json_literal
+        value: (number))))
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -57,13 +57,13 @@ GET /
 ---
 
 (source_file
-  (let_directive
+  let: (let_directive
     name: (identifier)
     target: (let_value
-      (json_literal
-        (number))))
-  (request_block
-    (request_line
+      value: (json_literal
+        value: (number))))
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -79,16 +79,16 @@ GET /
 ---
 
 (source_file
-  (let_directive
+  let: (let_directive
     name: (identifier)
     target: (let_value
-      (json_literal)))
-  (let_directive
+      value: (json_literal)))
+  let: (let_directive
     name: (identifier)
     target: (let_value
-      (json_literal)))
-  (request_block
-    (request_line
+      value: (json_literal)))
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -103,15 +103,15 @@ GET /
 ---
 
 (source_file
-  (let_directive
+  let: (let_directive
     name: (identifier)
     target: (let_value
-      (interpolation
+      value: (interpolation
         body: (interpolation_body
-          (value_reference
+          ref: (value_reference
             root: (identifier))))))
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -126,24 +126,24 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))))
-    (directive_line
-      (let_directive
+    directive: (directive_line
+      directive: (let_directive
         name: (identifier)
         target: (let_value
-          (json_literal
-            (string)))))))
+          value: (json_literal
+            value: (string)))))))
 
 =================================================================
 let_directive: cannot read the response body

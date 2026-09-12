@@ -8,12 +8,12 @@ hello world
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 octet_body: multi-line body
@@ -27,12 +27,12 @@ line three
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 octet_body: body with no trailing line ending at EOF
@@ -43,12 +43,12 @@ hello, no trailing newline
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 octet_body: a boundary marker mid-line is not a boundary
@@ -60,12 +60,12 @@ see ### here
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 octet_body: a near-miss boundary marker (four hashes) is literal text
@@ -78,12 +78,12 @@ more text
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 octet_body: an unrecognized @-directive falls back to plain body text
@@ -95,12 +95,12 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 message_body is optional: blank line followed directly by EOF
@@ -111,8 +111,8 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -127,14 +127,14 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (multipart_body
-        (multipart_part)
-        (multipart_part)))))
+    body: (message_body
+      body: (multipart_body
+        part: (multipart_part)
+        part: (multipart_part)))))
 
 =================================================================
 multipart_body: a single @field part with an empty value
@@ -146,13 +146,13 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (multipart_body
-        (multipart_part)))))
+    body: (message_body
+      body: (multipart_body
+        part: (multipart_part)))))
 
 =================================================================
 multipart_body: repeated @file parts
@@ -166,15 +166,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (multipart_body
-        (multipart_part)
-        (multipart_part)
-        (multipart_part)))))
+    body: (message_body
+      body: (multipart_body
+        part: (multipart_part)
+        part: (multipart_part)
+        part: (multipart_part)))))
 
 =================================================================
 plain body content immediately followed by a boundary marker is unparsed
@@ -213,11 +213,9 @@ hello
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
-
-
+    body: (message_body
+      body: (octet_body))))

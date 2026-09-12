@@ -56,6 +56,7 @@ type AccessorNode struct {
 // ArgumentNode represents a argument node.
 type ArgumentNode struct {
 	TSNode *ts.Node
+	Value  *ts.Node // field: value
 }
 
 // ArgumentsNode represents a arguments node.
@@ -68,12 +69,14 @@ type ArgumentsNode struct {
 type AssertDirectiveNode struct {
 	TSNode     *ts.Node
 	Comparator *ComparatorOperatorNode // field: comparator
-	Target     []*ts.Node              // field: target
+	Expected   *LetValueNode           // field: expected
+	Target     *AssertTargetNode       // field: target
 }
 
 // AssertTargetNode represents a assert_target node.
 type AssertTargetNode struct {
 	TSNode *ts.Node
+	Target *ts.Node // field: target
 }
 
 // BodyTargetNode represents a body_target node.
@@ -94,7 +97,8 @@ type DigitNode struct {
 
 // DirectiveLineNode represents a directive_line node.
 type DirectiveLineNode struct {
-	TSNode *ts.Node
+	TSNode    *ts.Node
+	Directive *ts.Node // field: directive
 }
 
 // FieldLineNode represents a field_line node.
@@ -111,7 +115,8 @@ type FieldNameNode struct {
 
 // FieldValueNode represents a field_value node.
 type FieldValueNode struct {
-	TSNode *ts.Node
+	TSNode        *ts.Node
+	Interpolation []*InterpolationNode // field: interpolation
 }
 
 // FieldValueSeperatorNode represents a field_value_seperator node.
@@ -152,11 +157,13 @@ type InterpolationNode struct {
 // InterpolationBodyNode represents a interpolation_body node.
 type InterpolationBodyNode struct {
 	TSNode *ts.Node
+	Ref    *ts.Node // field: ref
 }
 
 // JsonLiteralNode represents a json_literal node.
 type JsonLiteralNode struct {
 	TSNode *ts.Node
+	Value  *ts.Node // field: value
 }
 
 // LetDirectiveNode represents a let_directive node.
@@ -169,6 +176,7 @@ type LetDirectiveNode struct {
 // LetValueNode represents a let_value node.
 type LetValueNode struct {
 	TSNode *ts.Node
+	Value  *ts.Node // field: value
 }
 
 // MemberAccessNode represents a member_access node.
@@ -180,6 +188,7 @@ type MemberAccessNode struct {
 // MessageBodyNode represents a message_body node.
 type MessageBodyNode struct {
 	TSNode *ts.Node
+	Body   *ts.Node // field: body
 }
 
 // MethodNode represents a method node.
@@ -190,6 +199,7 @@ type MethodNode struct {
 // MultipartBodyNode represents a multipart_body node.
 type MultipartBodyNode struct {
 	TSNode *ts.Node
+	Part   []*MultipartPartNode // field: part
 }
 
 // MultipartPartNode represents a multipart_part node.
@@ -209,7 +219,11 @@ type OctetBodyNode struct {
 
 // RequestBlockNode represents a request_block node.
 type RequestBlockNode struct {
-	TSNode *ts.Node
+	TSNode      *ts.Node
+	Body        *MessageBodyNode     // field: body
+	Directive   []*DirectiveLineNode // field: directive
+	FieldLine   []*FieldLineNode     // field: field_line
+	RequestLine *RequestLineNode     // field: request_line
 }
 
 // RequestLineNode represents a request_line node.
@@ -227,7 +241,8 @@ type RequestNameNode struct {
 
 // RequestTargetNode represents a request_target node.
 type RequestTargetNode struct {
-	TSNode *ts.Node
+	TSNode        *ts.Node
+	Interpolation []*InterpolationNode // field: interpolation
 }
 
 // SaveDirectiveNode represents a save_directive node.
@@ -245,7 +260,10 @@ type SepratorNode struct {
 
 // SourceFileNode represents a source_file node.
 type SourceFileNode struct {
-	TSNode *ts.Node
+	TSNode   *ts.Node
+	Block    []*RequestBlockNode // field: block
+	Let      []*LetDirectiveNode // field: let
+	Seprator []*SepratorNode     // field: seprator
 }
 
 // StringNode represents a string node.

@@ -8,17 +8,17 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target)
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal
-            (number)))))))
+        expected: (let_value
+          value: (json_literal
+            value: (number)))))))
 
 =================================================================
 assert_directive: duration less-than
@@ -30,17 +30,17 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target)
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal
-            (number)))))))
+        expected: (let_value
+          value: (json_literal
+            value: (number)))))))
 
 =================================================================
 assert_directive: header target with string value
@@ -52,19 +52,19 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (header_target
+          target: (header_target
             name: (field_name)))
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal
-            (string)))))))
+        expected: (let_value
+          value: (json_literal
+            value: (string)))))))
 
 =================================================================
 assert_directive: body target with member access and null
@@ -76,20 +76,20 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal))))))
+        expected: (let_value
+          value: (json_literal))))))
 
 =================================================================
 assert_directive: body target with index access
@@ -101,14 +101,14 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))
@@ -116,9 +116,9 @@ GET /
               (index_access
                 index: (number)))))
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal
-            (string)))))))
+        expected: (let_value
+          value: (json_literal
+            value: (string)))))))
 
 =================================================================
 assert_directive: chained member and index accessors with contains
@@ -130,14 +130,14 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))
@@ -148,9 +148,9 @@ GET /
               (member_access
                 name: (identifier)))))
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal
-            (string)))))))
+        expected: (let_value
+          value: (json_literal
+            value: (string)))))))
 
 =================================================================
 assert_directive: matches comparator with regex string
@@ -162,21 +162,21 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal
-            (string)))))))
+        expected: (let_value
+          value: (json_literal
+            value: (string)))))))
 
 =================================================================
 assert_directive: interpolation value on the right-hand side
@@ -188,22 +188,22 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))
         comparator: (comparator_operator)
-        target: (let_value
-          (interpolation
+        expected: (let_value
+          value: (interpolation
             body: (interpolation_body
-              (value_reference
+              ref: (value_reference
                 root: (identifier)))))))))
 
 =================================================================
@@ -216,20 +216,20 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal))))))
+        expected: (let_value
+          value: (json_literal))))))
 
 =================================================================
 assert_directive: two directives in one block
@@ -242,27 +242,27 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (assert_directive
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target)
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal
-            (number)))))
-    (directive_line
-      (assert_directive
+        expected: (let_value
+          value: (json_literal
+            value: (number)))))
+    directive: (directive_line
+      directive: (assert_directive
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))
         comparator: (comparator_operator)
-        target: (let_value
-          (json_literal))))))
+        expected: (let_value
+          value: (json_literal))))))
 
 =================================================================
 assert_directive: missing comparator is unparsed
@@ -274,6 +274,8 @@ GET /
 
 ---
 
+
+
 =================================================================
 assert_directive: missing value is unparsed
 :error
@@ -284,6 +286,8 @@ GET /
 
 ---
 
+
+
 =================================================================
 assert_directive: no trailing line ending at EOF is unparsed
 :error
@@ -292,4 +296,5 @@ GET /
 
 @assert status == 200
 ---
+
 

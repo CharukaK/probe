@@ -8,14 +8,14 @@ Host: example.com
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))))
@@ -32,22 +32,22 @@ Connection: close
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))))
@@ -62,14 +62,14 @@ User-Agent: My Client 1.0
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))))
@@ -84,14 +84,14 @@ Host:    example.com
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))))
@@ -106,14 +106,14 @@ X-My-Header!#$: value
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))))
@@ -128,11 +128,11 @@ Host: example.com
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value))))
@@ -146,6 +146,8 @@ Host : example.com
 
 ---
 
+
+
 =================================================================
 missing colon after field name is an error
 :error
@@ -155,6 +157,8 @@ Host example.com
 
 ---
 
+
+
 =================================================================
 empty field value is an error
 :error
@@ -163,3 +167,5 @@ GET / HTTP/1.1
 Host:
 
 ---
+
+

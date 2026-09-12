@@ -8,15 +8,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))))))
@@ -31,15 +31,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target))))))
+          target: (body_target))))))
 
 =================================================================
 save_directive: nested body path
@@ -51,15 +51,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))
@@ -77,15 +77,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))
@@ -103,15 +103,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))
@@ -129,15 +129,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (index_access
                 index: (string)))))))))
@@ -152,15 +152,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))
@@ -181,6 +181,8 @@ GET /
 
 ---
 
+
+
 =================================================================
 save_directive: header target
 =================================================================
@@ -191,15 +193,15 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (header_target
+          target: (header_target
             name: (field_name)))))))
 
 =================================================================
@@ -212,12 +214,12 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target)))))
 
@@ -231,12 +233,12 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target)))))
 
@@ -252,17 +254,17 @@ hello world
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))
-    (directive_line
-      (save_directive
+    body: (message_body
+      body: (octet_body))
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))))))
@@ -313,23 +315,23 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))))
-    (directive_line
-      (save_directive
+    directive: (directive_line
+      directive: (save_directive
         name: (identifier)
         target: (assert_target
-          (body_target
+          target: (body_target
             accessor: (accessor
               (member_access
                 name: (identifier)))))))))

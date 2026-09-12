@@ -1,10 +1,11 @@
 package run
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/charukak/probe/cli/internal/parser"
-	"github.com/charukak/probe/cli/internal/request"
+	"github.com/charukak/probe/cli/internal/plan"
 	"github.com/spf13/cobra"
 )
 
@@ -18,19 +19,17 @@ var RunCmd = &cobra.Command{
 			return err
 		}
 
+		fmt.Println(verbose)
+
 		source, err := os.ReadFile(args[0])
 
 		if err != nil {
 			return err
 		}
 
-		sourceFile, err := parser.Parse(source)
-		if err != nil {
-			return err
-		}
+		root := parser.RootNodeFromSource(source)
 
-		err = request.BuildAndExec(sourceFile, &request.Opts{Verbose: verbose})
-
+		_, err = plan.FromAst(root, source)
 		if err != nil {
 			return err
 		}

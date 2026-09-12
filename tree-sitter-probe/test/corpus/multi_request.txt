@@ -11,13 +11,13 @@ POST /b
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)))
-  (seprator)
-  (request_block
-    (request_line
+  seprator: (seprator)
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -34,14 +34,14 @@ POST /b
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)))
-  (seprator
+  seprator: (seprator
     name: (request_name))
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -62,18 +62,18 @@ GET /c
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)))
-  (seprator)
-  (request_block
-    (request_line
+  seprator: (seprator)
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)))
-  (seprator)
-  (request_block
-    (request_line
+  seprator: (seprator)
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -88,8 +88,8 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -103,9 +103,9 @@ GET /
 ---
 
 (source_file
-  (seprator)
-  (request_block
-    (request_line
+  seprator: (seprator)
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -119,10 +119,10 @@ GET /
 ---
 
 (source_file
-  (seprator
+  seprator: (seprator
     name: (request_name))
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -136,12 +136,12 @@ GET /
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 plain body text that merely resembles a request line is not mistaken for a new request without a ### separator
@@ -153,12 +153,12 @@ GET /b
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))
-    (message_body
-      (octet_body))))
+    body: (message_body
+      body: (octet_body))))
 
 =================================================================
 a separator name containing internal spaces
@@ -173,14 +173,14 @@ GET /b
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)))
-  (seprator
+  seprator: (seprator
     name: (request_name))
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target))))
 
@@ -194,6 +194,8 @@ GET /
 
 ---
 
+
+
 =================================================================
 consecutive ### separators with no request block between them is an error
 :error
@@ -205,3 +207,5 @@ GET /
 GET /b
 
 ---
+
+

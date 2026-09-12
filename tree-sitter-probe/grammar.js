@@ -17,14 +17,14 @@ module.exports = grammar({
     // --- Entry point ---
     source_file: $ => seq(
       repeat($._line_ending),
-      repeat(seq($.let_directive, repeat($._line_ending))),
-      optional($.seprator),
-      $.request_block,
+      repeat(seq(field('let', $.let_directive), repeat($._line_ending))),
+      optional(field('seprator', $.seprator)),
+      field('block', $.request_block),
       repeat(seq(
         repeat($._line_ending),
-        $.seprator,
+        field('seprator', $.seprator),
         repeat($._line_ending),
-        $.request_block
+        field('block', $.request_block)
       )),
       repeat($._line_ending)
     ),
@@ -52,7 +52,7 @@ module.exports = grammar({
       '"'
     ),
     number: _ => /-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?/,
-    argument: $ => choice($.value_reference, $.string, $.number),
+    argument: $ => field('value', choice($.value_reference, $.string, $.number)),
     arguments: $ => seq(
       field('argument', $.argument),
       repeat(seq(
@@ -71,13 +71,13 @@ module.exports = grammar({
     ),
     request_name: _ => /[ -~]+/,
     method: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    request_target: $ => repeat1(choice($.interpolation, $._target_run, '{')), // capture the token
+    request_target: $ => repeat1(choice(field('interpolation', $.interpolation), $._target_run, '{')), // capture the token
     field_name: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    field_value: $ => repeat1(choice($.interpolation, $._value_run, '{')),
+    field_value: $ => repeat1(choice(field('interpolation', $.interpolation), $._value_run, '{')),
     field_value_seperator: _ => ':',
     multipart_part: $ => seq(choice('@field', '@file'), /[^\r\n]*/, $._line_ending),
-    multipart_body: $ => repeat1($.multipart_part),
-    message_body: $ => choice($.multipart_body, $.octet_body),
+    multipart_body: $ => repeat1(field('part', $.multipart_part)),
+    message_body: $ => field('body', choice($.multipart_body, $.octet_body)),
     // A chain of accessors walking into a value, root-first. This is the
     // one building block for every dotted/indexed path in the language:
     // {{alias.name}} today, and later @assert's `body.x.y[0]` target
@@ -100,7 +100,7 @@ module.exports = grammar({
     ),
     header_target: $ => seq('headers', '.', field('name', $.field_name)),
     body_target: $ => seq('body', repeat(field('accessor', $.accessor))),
-    assert_target: $ => choice('status', 'duration', $.header_target, $.body_target),
+    assert_target: $ => choice('status', 'duration', field('target', $.header_target), field('target', $.body_target)),
 
     util_reference: $ => seq(
       field('util_name', $.identifier),
@@ -108,7 +108,7 @@ module.exports = grammar({
       optional($.arguments),
       ')',
     ),
-    interpolation_body: $ => choice($.value_reference, $.util_reference),
+    interpolation_body: $ => field('ref', choice($.value_reference, $.util_reference)),
     interpolation: $ => seq(
       '{{',
       repeat($._wsp),
@@ -116,8 +116,8 @@ module.exports = grammar({
       repeat($._wsp),
       '}}'
     ),
-    json_literal: $ => choice('null', 'true', 'false', $.number, $.string),
-    let_value: $ => choice($.json_literal, $.interpolation),
+    json_literal: $ => choice('null', 'true', 'false', field('value', $.number), field('value', $.string)),
+    let_value: $ => field('value', choice($.json_literal, $.interpolation)),
     save_directive: $ => seq(
       '@save',
       $._wsp,
@@ -145,10 +145,10 @@ module.exports = grammar({
       optional($._wsp),
       field('comparator', $.comparator_operator),
       optional($._wsp),
-      field('target', $.let_value),
+      field('expected', $.let_value),
       $._line_ending
     ),
-    directive_line: $ => choice($.save_directive, $.let_directive, $.assert_directive),
+    directive_line: $ => field('directive', choice($.save_directive, $.let_directive, $.assert_directive)),
 
     http_version: $ => seq(
       'HTTP/',
@@ -181,11 +181,11 @@ module.exports = grammar({
     ),
 
     request_block: $ => seq(
-      $.request_line,
-      repeat($.field_line),
+      field('request_line', $.request_line),
+      repeat(field('field_line', $.field_line)),
       $._line_ending,
-      optional($.message_body),
-      repeat($.directive_line)
+      optional(field('body', $.message_body)),
+      repeat(field('directive', $.directive_line))
     )
   }
 });

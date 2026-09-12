@@ -7,13 +7,13 @@ GET {{baseUrl}}/users HTTP/1.1
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (value_reference
+            ref: (value_reference
               root: (identifier)))))
       version: (http_version
         major: (digit)
@@ -28,13 +28,13 @@ GET {{auth.token}} HTTP/1.1
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (value_reference
+            ref: (value_reference
               root: (identifier)
               accessor: (accessor
                 (member_access
@@ -53,20 +53,20 @@ X-Request-Id: {{uuid()}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (util_reference
+            ref: (util_reference
               util_name: (identifier))))))))
 
 =================================================================
@@ -78,17 +78,17 @@ GET {{scheme}}://{{host}}/a HTTP/1.1
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (value_reference
+            ref: (value_reference
               root: (identifier))))
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (value_reference
+            ref: (value_reference
               root: (identifier)))))
       version: (http_version
         major: (digit)
@@ -104,20 +104,20 @@ Authorization: Bearer {{token}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (value_reference
+            ref: (value_reference
               root: (identifier))))))))
 
 =================================================================
@@ -129,8 +129,8 @@ GET /{path}/x HTTP/1.1
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
@@ -158,24 +158,24 @@ X: {{base64(value)}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (util_reference
+            ref: (util_reference
               util_name: (identifier)
               (arguments
                 argument: (argument
-                  (value_reference
+                  value: (value_reference
                     root: (identifier)))))))))))
 
 =================================================================
@@ -188,30 +188,30 @@ X: {{hmac_sha256(secret.key, body)}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (util_reference
+            ref: (util_reference
               util_name: (identifier)
               (arguments
                 argument: (argument
-                  (value_reference
+                  value: (value_reference
                     root: (identifier)
                     accessor: (accessor
                       (member_access
                         name: (identifier)))))
                 argument: (argument
-                  (value_reference
+                  value: (value_reference
                     root: (identifier)))))))))))
 
 =================================================================
@@ -224,24 +224,24 @@ X: {{now("iso8601")}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (util_reference
+            ref: (util_reference
               util_name: (identifier)
               (arguments
                 argument: (argument
-                  (string))))))))))
+                  value: (string))))))))))
 
 =================================================================
 a string argument containing an escaped double-quote
@@ -253,24 +253,24 @@ X: {{now("a\"b")}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (util_reference
+            ref: (util_reference
               util_name: (identifier)
               (arguments
                 argument: (argument
-                  (string))))))))))
+                  value: (string))))))))))
 
 =================================================================
 a util_reference argument as a number literal, including a sign and exponent
@@ -282,24 +282,24 @@ X: {{f(-1.5e10)}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (util_reference
+            ref: (util_reference
               util_name: (identifier)
               (arguments
                 argument: (argument
-                  (number))))))))))
+                  value: (number))))))))))
 
 =================================================================
 whitespace is allowed around the argument-separating comma
@@ -311,27 +311,27 @@ X: {{hmac_sha256(a , b)}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (util_reference
+            ref: (util_reference
               util_name: (identifier)
               (arguments
                 argument: (argument
-                  (value_reference
+                  value: (value_reference
                     root: (identifier)))
                 argument: (argument
-                  (value_reference
+                  value: (value_reference
                     root: (identifier)))))))))))
 
 =================================================================
@@ -419,20 +419,20 @@ X: {{a.b.c}}
 ---
 
 (source_file
-  (request_block
-    (request_line
+  block: (request_block
+    request_line: (request_line
       method: (method)
       target: (request_target)
       version: (http_version
         major: (digit)
         minor: (digit)))
-    (field_line
+    field_line: (field_line
       name: (field_name)
       (field_value_seperator)
       value: (field_value
-        (interpolation
+        interpolation: (interpolation
           body: (interpolation_body
-            (value_reference
+            ref: (value_reference
               root: (identifier)
               accessor: (accessor
                 (member_access
