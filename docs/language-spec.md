@@ -9,19 +9,19 @@ Status: **Draft, v1 scope only.** Not yet implemented. Control flow
 **v0.2 changes**: added built-in functions to interpolation (§6), multipart
 / file-upload bodies (§4.4), teardown blocks (§5), expanded `@assert`
 comparators for length/existence/schema (§7.1), and the `probe.toml` project
-configuration file (§13). These were identified as grammar-affecting gaps
-that needed resolving before the Probe-extensions layer could be finalized.
+configuration file (§13). These were grammar-affecting gaps
+that had to be resolved before finalizing the Probe-extensions layer.
 
 **v0.3 changes**: `@use ... as <alias>` (§7.3), namespaced imports that close
 a variable-shadowing hole in the flat import model v0.1–v0.2 shipped with
 (two `@use`d dependencies, or a dependency and its importer, saving the same
 identifier would silently overwrite one another with no error).
 
-**v0.4 changes**: dropped the standalone `comment-line` (`#`) construct —
-nothing in the PRD or roadmap ever required it, and `separator` (`###`,
+**v0.4 changes**: dropped the standalone `comment-line` (`#`) construct.
+Nothing in the PRD or roadmap ever required it, and `separator` (`###`,
 §3) already carries optional free-form trailing text, so it does the
 labeling/documentation job a `#` comment would have. `separator` is now
-also allowed (optionally) before a file's first request block, not just
+also allowed optionally before a file's first request block, not just
 between blocks, so that first block can carry a label too. `~~~` teardown
 blocks (§5) are unaffected and unchanged.
 
@@ -37,11 +37,11 @@ like any other unresolved reference. `body-target` (§7.1) now reads as
 
 **v0.6 changes**: added `@let` (§7.4), a directive for declaring a local
 constant or copying/shadowing an existing variable without deriving the
-value from a response — closing the gap `@save`'s response-only
-`assert-target` RHS left for that case. Valid in two positions: as a
+value from a response. This closes the gap `@save`'s response-only
+`assert-target` RHS left for that case. Valid in two positions. Use it as a
 leading file-scoped directive alongside `@use` (§2), or as an ordinary
 request-scoped `directive-line` (§7) that takes effect for everything
-after it, same as a re-`@save`. This retires the §11 non-goal that
+after it, same as a re-`@save`. This removes the §11 non-goal that
 previously pointed generic file-scoped constants at `--env` only.
 
 ## 1. Notation
@@ -71,7 +71,7 @@ blank-line    = line-ending   ; an empty line, carries no meaning here
 
 A `.probe` file is one or more **request blocks**, each a plain RFC 9110
 HTTP request followed by Probe directive lines, separated by an explicit
-`###` delimiter (§3). There's no separate comment construct — a
+`###` delimiter (§3). There's no separate comment construct. A
 `separator`'s optional trailing text doubles as that block's label, so it's
 also where block-level documentation goes. Between blocks the `separator`
 is required; before the file's first block it's optional, allowed purely to
@@ -90,12 +90,12 @@ request-name = 1*(VCHAR / SP)
 
 - `###` on its own line starts a new request block. Text after `###` on the
   same line is that request's name (used in CLI/report output, as a
-  reference target for future chaining features, and as a free-form label —
-  there's no separate comment construct; a `###` line's trailing text is
-  where block-level documentation goes).
-- Between two request blocks, `###` is **required** — it's the only thing
+  reference target for future chaining features, and as a free-form label).
+  There's no separate comment construct; a `###` line's trailing text is
+  where block-level documentation goes.
+- Between two request blocks, `###` is **required**. It's the only thing
   that marks where one block ends and the next begins.
-- Before the file's **first** request block, `###` is **optional**: nothing
+- Before the file's **first** request block, `###` is **optional**. Nothing
   precedes it there to separate, but a lone `### <name>` line is still
   allowed purely as a label for that first block. This is the one place a
   `separator` doesn't imply an actual boundary.
@@ -207,7 +207,7 @@ teardown-block = teardown-sep *blank-line http-request *directive-line
 teardown-sep   = "~~~" [ 1*SP request-name ] line-ending
 ```
 
-- `~~~` introduces a **teardown block**: a request (with its own
+- `~~~` introduces a **teardown block**. It's a request (with its own
   `@assert`/`@save` directives) that belongs to the request-block
   immediately above it, rather than starting an independent test. It shares
   the same variable scope, so it can reference values the owning block
@@ -255,19 +255,19 @@ fn-arg        = path / string / number
 
 `{{path}}` may appear anywhere in a request-target, header field-value, or
 message body. `path` is the one accessor-chain grammar used everywhere a
-value needs walking into by name or by index — it's the same `accessor`
+value needs walking into by name or by index. It's the same `accessor`
 production `body-target` (§7.1) uses for `body.x.y[0]`, just rooted at a
 plain `identifier` instead of the literal `body`. There's deliberately no
-second, separate dotted-path notation: `{{auth.token}}`'s `.token` and
+second, separate dotted-path notation. `{{auth.token}}`'s `.token` and
 `@assert`'s `body.token` are the same kind of step.
 
 A bare `identifier` (no accessors) resolves directly per the lookup order
-below. Each `accessor` after it — `.name` or `[index]` — walks one level
+below. Each `accessor` after it, `.name` or `[index]`, walks one level
 into whatever the previous step resolved to; it's a **runtime** error (not
 a parse error) if that value isn't a structured value in the first place,
 or the key/index isn't present, the same way an unresolved bare identifier
 already is (see below). The `alias.name` form produced by an aliased `@use
-... as alias` (§7.3) is just the one-accessor case of this: `alias`
+... as alias` (§7.3) is just the one-accessor case of this. `alias`
 resolves to that dependency's saved-value view, and `.name` looks a name up
 in it.
 
@@ -284,7 +284,7 @@ Built-in v1 functions:
 | `base64(value)` | `string` or `path` | Base64-encoded `value` |
 | `hmac_sha256(key, value)` | two `string`s or `path`s | Hex-encoded HMAC-SHA256, for signed-request headers |
 
-This set is deliberately small: it covers the recurring "idempotency key /
+This set is deliberately small. It covers the recurring "idempotency key /
 timestamp header / signed request" cases. Additional functions are additive
 (new `fn-name` alternatives), not breaking changes.
 
@@ -303,8 +303,8 @@ timestamp header / signed request" cases. Additional functions are additive
 `function-call`s are evaluated fresh each time they're encountered; they
 don't participate in this lookup order themselves, only their arguments do.
 
-An unresolved `{{path}}` — its root `identifier`, or any `accessor` step
-after it — or a `function-call` with an unresolvable argument, at execution
+An unresolved `{{path}}`, its root `identifier`, or any `accessor` step
+after it, or a `function-call` with an unresolvable argument, at execution
 time is a runtime error (not a parse error) that fails the containing
 request.
 
@@ -316,12 +316,12 @@ directive-line = ( assert-directive / save-directive / let-directive ) line-endi
 
 Directive lines follow the request's body (or its blank-line terminator, if
 there's no body) and precede the next `separator` or EOF. `@assert` and
-`@save` (§7.1, §7.2) are **request-scoped**: they attach to the request
-immediately above them. `@use` (§7.3) is **file-scoped**: it's a leading
+`@save` (§7.1, §7.2) are **request-scoped**. They attach to the request
+immediately above them. `@use` (§7.3) is **file-scoped**. It's a leading
 directive that appears before any request-block (§2) and declares a
 dependency on another file, rather than describing a single request. `@let`
-(§7.4) is the one directive valid in **either** position: as a leading
-directive alongside `@use`, for a file-scoped constant available
+(§7.4) is the one directive valid in **either** position. Use it as a leading
+directive alongside `@use` for a file-scoped constant available
 everywhere in the file; or as a request-scoped `directive-line` alongside
 `@assert`/`@save`, taking effect for everything after it in file order.
 
@@ -343,7 +343,7 @@ json-literal      = "null" / "true" / "false" / number / string
 ```
 
 - `body-target` is `path` (§6) rooted at the literal `body` instead of an
-  `identifier` — the same accessor-chain grammar, not a second one. Dot
+  `identifier`. It's the same accessor-chain grammar, not a second one. Dot
   notation walks object keys, bracket notation walks array indices, e.g.
   `body.user.id`, `body.items[0].name`.
 - `matches` (in `value-assert`) compares against a regular expression
@@ -437,24 +437,24 @@ changes what running a file means):
 **Namespacing (`as alias`) and variable visibility:**
 
 Each file builds its own **view** of `{{identifier}}`-resolvable names,
-resolution-order tier 1 (§6), out of two sources: its own request-blocks'
-`@save`s, and its `@use`d dependencies' `@save`s, combined per directive:
+resolution-order tier 1 (§6), out of two sources. Those sources are its own request-blocks'
+`@save`s and its `@use`d dependencies' `@save`s, combined per directive.
 
-- **`@use "path" as alias`** (namespaced): the dependency's saved values are
+- **`@use "path" as alias`** (namespaced). The dependency's saved values are
   reachable *only* as `{{alias.name}}`, never as bare `{{name}}`. This is
-  the one-`accessor` case of the general `path` grammar (§6) — `alias`
+  the one-`accessor` case of the general `path` grammar (§6). `alias`
   resolves to the dependency's view, `.name` looks a name up in it, same
   as any other accessor step. Namespacing is local to the importing file;
   it doesn't rename anything inside the dependency itself, and it doesn't
-  propagate: if that dependency
+  propagate. If that dependency
   has its own `@use`s, *their* names aren't re-exposed through `alias.*`
   unless the dependency chooses to re-export them (not a v1 concept; see
   §11).
-- **`@use "path"`** (unaliased, the v1-original form): the dependency's
+- **`@use "path"`** (unaliased, the v1-original form). The dependency's
   saved values flatten directly into the importing file's own flat
   namespace, alongside its own `@save`s. This is unchanged from pre-v0.3
   behavior.
-- **Collision rule for flattened (unaliased) names**: if two different
+- **Collision rule for flattened (unaliased) names.** If two different
   `@use`d files, neither one a dependency of the other, would both
   contribute the same flat name to the same importing file's view, that's a
   **hard error at resolution time**, naming both source files and the
@@ -465,7 +465,7 @@ resolution-order tier 1 (§6), out of two sources: its own request-blocks'
   freely re-`@save`/`@let` a name it (or its flat imports) already bound,
   e.g. a token-refresh request re-saving `token` after login is normal and
   allowed.
-- **Alias collisions**: two `@use` lines in the same file may not declare
+- **Alias collisions.** Two `@use` lines in the same file may not declare
   the same `alias`. That's a syntax-adjacent error caught at resolution
   time (same phase as the flat-name collision above).
 
@@ -495,20 +495,20 @@ let-directive = "@let" SP identifier SP "=" SP let-value
 let-value     = json-literal / interpolation
 ```
 
-Binds `identifier` to a value that isn't derived from any response —
-either a literal, or a copy of an existing `{{path}}`/`{{function()}}`
+Binds `identifier` to a value that isn't derived from any response,
+either a literal or a copy of an existing `{{path}}`/`{{function()}}`
 result. This is the local-constant/shadowing counterpart to `@save`
-(§7.2): `@save` always pulls from the response of the request it's
+(§7.2). `@save` always pulls from the response of the request it's
 attached to; `@let` never does. Whichever directive most recently bound a
 name is the one `{{identifier}}` resolution (§6, tier 1) sees.
 
 `@let` may appear in either of two positions:
 
 - **As a leading directive**, alongside `@use` (§2), before the file's
-  first request-block — a file-scoped constant available to every request
+  first request-block. This makes a file-scoped constant available to every request
   in the file, the same way a `@use`d dependency's saved values are.
 - **As a request-scoped `directive-line`** (§7), interleaved with
-  `@assert`/`@save` after any request-block — takes effect from that point
+  `@assert`/`@save` after any request-block. It takes effect from that point
   in file order onward, e.g. overriding a value for the requests that
   follow without needing a real response to derive it from.
 
@@ -533,12 +533,12 @@ Authorization: Bearer {{token}}
 ```
 
 - `@let`'s shadowing/override rules follow the same ones `@save` already
-  has against flat `@use` imports (§7.3): a file's own binding — whether
-  from `@save` or `@let` — always wins over an imported flat name, and a
+  has against flat `@use` imports (§7.3). A file's own binding, whether
+  from `@save` or `@let`, always wins over an imported flat name. A
   later `@save`/`@let` in the same file may freely re-bind a name already
   bound. There's no separate collision rule specific to `@let`.
 - Because `let-value` doesn't include `assert-target`, `@let` can't read
-  `status`/`headers.*`/`body.*` directly — that's `@save`'s job. This keeps
+  `status`/`headers.*`/`body.*` directly. That's `@save`'s job. This keeps
   "where did this value come from" answerable just by which directive
   bound it.
 
@@ -673,11 +673,11 @@ makes `{{token}}` available; no separate invocation needed.
 
 ## 11. Non-goals for v1 (deferred)
 
-- **Control flow** (loops, conditionals): deliberately out of scope until a
+- **Control flow** (loops, conditionals) is deliberately out of scope until a
   v2 addendum to this spec.
 - Request-to-request references by `request-name` (only forward capture via
   `@save`/`{{var}}` is specified).
-- Selective (partial) variable import on `@use`: importing only *some* of
+- Selective (partial) variable import on `@use`. Importing only *some* of
   a dependency's `@save`d names rather than all of them. `@use ... as alias`
   (§7.3) namespaces the whole set to avoid collisions; it doesn't let you
   cherry-pick a subset.
@@ -686,7 +686,7 @@ makes `{{token}}` available; no separate invocation needed.
   exactly these elements, any order").
 - Chaining more than one teardown block per request-block (§5), and
   file-level (as opposed to request-level) teardown.
-- Composable/nested function calls in interpolation (§6): v1's
+- Composable/nested function calls in interpolation (§6). v1's
   `function-call` args are limited to `path`/literal, not another
   `function-call`.
 - Operational features that don't affect this document's grammar:
@@ -706,7 +706,7 @@ and versions independently; see §13.
 
 *Not part of the `.probe` grammar (§1–§10 above). This section specifies a
 companion TOML file that supplies defaults `.probe` files rely on but don't
-declare themselves, chiefly per-environment `baseUrl` values.*
+declare themselves, mainly per-environment `baseUrl` values.*
 
 ### 13.1 Discovery
 
@@ -745,8 +745,7 @@ baseUrl = "https://staging.api.example.com"
 ### 13.3 Relationship to `--env <file>`
 
 The existing `--env <file>` flag (a flat key=value dotenv-style file) and
-this `probe.toml`'s `[env.<name>]` tables overlap in purpose. **Open
-decision, not resolved by this spec**: whether `--env <file>` is kept as a
+this `probe.toml`'s `[env.<name>]` tables overlap in purpose. This spec doesn't resolve whether `--env <file>` is kept as a
 lower-precedence override mechanism (as reflected in §6's resolution order,
 tier 2 vs. tier 3) or is subsumed entirely by `probe.toml`.
 
@@ -864,7 +863,7 @@ Authorization: Bearer {{token}}
 @save userName = body.name
 ```
 
-Not addressed here, and not solved by method classification alone:
+The following are not addressed here, and method classification alone doesn't solve them:
 
 - **Message shape.** JSON transcoding needs a Protobuf descriptor source
   (server reflection, or a compiled `.proto` file) to know what a method's
@@ -908,6 +907,6 @@ specified):
 This is the largest unresolved piece of the whole proposal and isn't
 designed past this paragraph. It would need its own grammar section (send/
 expect directive syntax, ordering and timeout semantics) and its own
-execution model (a request block that, once opened, becomes a session
-other directive lines act within). Until it exists, `WS`/`WSS` covers the
+execution model. That model would be a request block that, once opened, becomes a session
+other directive lines act within. Until it exists, `WS`/`WSS` covers the
 handshake only, and `GRPC` covers unary calls only.
