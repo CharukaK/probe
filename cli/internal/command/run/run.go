@@ -27,9 +27,9 @@ var RunCmd = &cobra.Command{
 			return err
 		}
 
-		root := parser.RootNodeFromSource(source)
+		res := parser.Parse(source)
 
-		_, err = plan.FromAst(root, source)
+		_, err = plan.FromAst(res.Root, source)
 		if err != nil {
 			return err
 		}

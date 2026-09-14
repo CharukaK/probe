@@ -50,24 +50,24 @@ const (
 
 // AccessorNode represents a accessor node.
 type AccessorNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // ArgumentNode represents a argument node.
 type ArgumentNode struct {
-	TSNode *ts.Node
-	Value  *ts.Node // field: value
+	*ts.Node
+	Value *ts.Node // field: value
 }
 
 // ArgumentsNode represents a arguments node.
 type ArgumentsNode struct {
-	TSNode   *ts.Node
+	*ts.Node
 	Argument []*ArgumentNode // field: argument
 }
 
 // AssertDirectiveNode represents a assert_directive node.
 type AssertDirectiveNode struct {
-	TSNode     *ts.Node
+	*ts.Node
 	Comparator *ComparatorOperatorNode // field: comparator
 	Expected   *LetValueNode           // field: expected
 	Target     *AssertTargetNode       // field: target
@@ -75,151 +75,151 @@ type AssertDirectiveNode struct {
 
 // AssertTargetNode represents a assert_target node.
 type AssertTargetNode struct {
-	TSNode *ts.Node
+	*ts.Node
 	Target *ts.Node // field: target
 }
 
 // BodyTargetNode represents a body_target node.
 type BodyTargetNode struct {
-	TSNode   *ts.Node
+	*ts.Node
 	Accessor []*AccessorNode // field: accessor
 }
 
 // ComparatorOperatorNode represents a comparator_operator node.
 type ComparatorOperatorNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // DigitNode represents a digit node.
 type DigitNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // DirectiveLineNode represents a directive_line node.
 type DirectiveLineNode struct {
-	TSNode    *ts.Node
+	*ts.Node
 	Directive *ts.Node // field: directive
 }
 
 // FieldLineNode represents a field_line node.
 type FieldLineNode struct {
-	TSNode *ts.Node
-	Name   *FieldNameNode  // field: name
-	Value  *FieldValueNode // field: value
+	*ts.Node
+	Name  *FieldNameNode  // field: name
+	Value *FieldValueNode // field: value
 }
 
 // FieldNameNode represents a field_name node.
 type FieldNameNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // FieldValueNode represents a field_value node.
 type FieldValueNode struct {
-	TSNode        *ts.Node
+	*ts.Node
 	Interpolation []*InterpolationNode // field: interpolation
 }
 
 // FieldValueSeperatorNode represents a field_value_seperator node.
 type FieldValueSeperatorNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // HeaderTargetNode represents a header_target node.
 type HeaderTargetNode struct {
-	TSNode *ts.Node
-	Name   *FieldNameNode // field: name
+	*ts.Node
+	Name *FieldNameNode // field: name
 }
 
 // HttpVersionNode represents a http_version node.
 type HttpVersionNode struct {
-	TSNode *ts.Node
-	Major  *DigitNode // field: major
-	Minor  *DigitNode // field: minor
+	*ts.Node
+	Major *DigitNode // field: major
+	Minor *DigitNode // field: minor
 }
 
 // IdentifierNode represents a identifier node.
 type IdentifierNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // IndexAccessNode represents a index_access node.
 type IndexAccessNode struct {
-	TSNode *ts.Node
-	Index  *ts.Node // field: index
+	*ts.Node
+	Index *ts.Node // field: index
 }
 
 // InterpolationNode represents a interpolation node.
 type InterpolationNode struct {
-	TSNode *ts.Node
-	Body   *InterpolationBodyNode // field: body
+	*ts.Node
+	Body *InterpolationBodyNode // field: body
 }
 
 // InterpolationBodyNode represents a interpolation_body node.
 type InterpolationBodyNode struct {
-	TSNode *ts.Node
-	Ref    *ts.Node // field: ref
+	*ts.Node
+	Ref *ts.Node // field: ref
 }
 
 // JsonLiteralNode represents a json_literal node.
 type JsonLiteralNode struct {
-	TSNode *ts.Node
-	Value  *ts.Node // field: value
+	*ts.Node
+	Value *ts.Node // field: value
 }
 
 // LetDirectiveNode represents a let_directive node.
 type LetDirectiveNode struct {
-	TSNode *ts.Node
+	*ts.Node
 	Name   *IdentifierNode // field: name
 	Target *LetValueNode   // field: target
 }
 
 // LetValueNode represents a let_value node.
 type LetValueNode struct {
-	TSNode *ts.Node
-	Value  *ts.Node // field: value
+	*ts.Node
+	Value *ts.Node // field: value
 }
 
 // MemberAccessNode represents a member_access node.
 type MemberAccessNode struct {
-	TSNode *ts.Node
-	Name   *IdentifierNode // field: name
+	*ts.Node
+	Name *IdentifierNode // field: name
 }
 
 // MessageBodyNode represents a message_body node.
 type MessageBodyNode struct {
-	TSNode *ts.Node
-	Body   *ts.Node // field: body
+	*ts.Node
+	Body *ts.Node // field: body
 }
 
 // MethodNode represents a method node.
 type MethodNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // MultipartBodyNode represents a multipart_body node.
 type MultipartBodyNode struct {
-	TSNode *ts.Node
-	Part   []*MultipartPartNode // field: part
+	*ts.Node
+	Part []*MultipartPartNode // field: part
 }
 
 // MultipartPartNode represents a multipart_part node.
 type MultipartPartNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // NumberNode represents a number node.
 type NumberNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // OctetBodyNode represents a octet_body node.
 type OctetBodyNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // RequestBlockNode represents a request_block node.
 type RequestBlockNode struct {
-	TSNode      *ts.Node
+	*ts.Node
 	Body        *MessageBodyNode     // field: body
 	Directive   []*DirectiveLineNode // field: directive
 	FieldLine   []*FieldLineNode     // field: field_line
@@ -228,7 +228,7 @@ type RequestBlockNode struct {
 
 // RequestLineNode represents a request_line node.
 type RequestLineNode struct {
-	TSNode  *ts.Node
+	*ts.Node
 	Method  *MethodNode        // field: method
 	Target  *RequestTargetNode // field: target
 	Version *HttpVersionNode   // field: version
@@ -236,31 +236,31 @@ type RequestLineNode struct {
 
 // RequestNameNode represents a request_name node.
 type RequestNameNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // RequestTargetNode represents a request_target node.
 type RequestTargetNode struct {
-	TSNode        *ts.Node
+	*ts.Node
 	Interpolation []*InterpolationNode // field: interpolation
 }
 
 // SaveDirectiveNode represents a save_directive node.
 type SaveDirectiveNode struct {
-	TSNode *ts.Node
+	*ts.Node
 	Name   *IdentifierNode   // field: name
 	Target *AssertTargetNode // field: target
 }
 
 // SepratorNode represents a seprator node.
 type SepratorNode struct {
-	TSNode *ts.Node
-	Name   *RequestNameNode // field: name
+	*ts.Node
+	Name *RequestNameNode // field: name
 }
 
 // SourceFileNode represents a source_file node.
 type SourceFileNode struct {
-	TSNode   *ts.Node
+	*ts.Node
 	Block    []*RequestBlockNode // field: block
 	Let      []*LetDirectiveNode // field: let
 	Seprator []*SepratorNode     // field: seprator
@@ -268,18 +268,730 @@ type SourceFileNode struct {
 
 // StringNode represents a string node.
 type StringNode struct {
-	TSNode *ts.Node
+	*ts.Node
 }
 
 // UtilReferenceNode represents a util_reference node.
 type UtilReferenceNode struct {
-	TSNode   *ts.Node
+	*ts.Node
 	UtilName *IdentifierNode // field: util_name
 }
 
 // ValueReferenceNode represents a value_reference node.
 type ValueReferenceNode struct {
-	TSNode   *ts.Node
+	*ts.Node
 	Accessor []*AccessorNode // field: accessor
 	Root     *IdentifierNode // field: root
+}
+
+// NewAccessorNode builds a AccessorNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewAccessorNode(n *ts.Node) AccessorNode {
+	v := AccessorNode{Node: n}
+	return v
+}
+
+// NewArgumentNode builds a ArgumentNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewArgumentNode(n *ts.Node) ArgumentNode {
+	v := ArgumentNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "value":
+				v.Value = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewArgumentsNode builds a ArgumentsNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewArgumentsNode(n *ts.Node) ArgumentsNode {
+	v := ArgumentsNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "argument":
+				c := NewArgumentNode(child)
+				v.Argument = append(v.Argument, &c)
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewAssertDirectiveNode builds a AssertDirectiveNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewAssertDirectiveNode(n *ts.Node) AssertDirectiveNode {
+	v := AssertDirectiveNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "comparator":
+				c := NewComparatorOperatorNode(child)
+				v.Comparator = &c
+			case "expected":
+				c := NewLetValueNode(child)
+				v.Expected = &c
+			case "target":
+				c := NewAssertTargetNode(child)
+				v.Target = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewAssertTargetNode builds a AssertTargetNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewAssertTargetNode(n *ts.Node) AssertTargetNode {
+	v := AssertTargetNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "target":
+				v.Target = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewBodyTargetNode builds a BodyTargetNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewBodyTargetNode(n *ts.Node) BodyTargetNode {
+	v := BodyTargetNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "accessor":
+				c := NewAccessorNode(child)
+				v.Accessor = append(v.Accessor, &c)
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewComparatorOperatorNode builds a ComparatorOperatorNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewComparatorOperatorNode(n *ts.Node) ComparatorOperatorNode {
+	v := ComparatorOperatorNode{Node: n}
+	return v
+}
+
+// NewDigitNode builds a DigitNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewDigitNode(n *ts.Node) DigitNode {
+	v := DigitNode{Node: n}
+	return v
+}
+
+// NewDirectiveLineNode builds a DirectiveLineNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewDirectiveLineNode(n *ts.Node) DirectiveLineNode {
+	v := DirectiveLineNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "directive":
+				v.Directive = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewFieldLineNode builds a FieldLineNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewFieldLineNode(n *ts.Node) FieldLineNode {
+	v := FieldLineNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "name":
+				c := NewFieldNameNode(child)
+				v.Name = &c
+			case "value":
+				c := NewFieldValueNode(child)
+				v.Value = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewFieldNameNode builds a FieldNameNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewFieldNameNode(n *ts.Node) FieldNameNode {
+	v := FieldNameNode{Node: n}
+	return v
+}
+
+// NewFieldValueNode builds a FieldValueNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewFieldValueNode(n *ts.Node) FieldValueNode {
+	v := FieldValueNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "interpolation":
+				c := NewInterpolationNode(child)
+				v.Interpolation = append(v.Interpolation, &c)
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewFieldValueSeperatorNode builds a FieldValueSeperatorNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewFieldValueSeperatorNode(n *ts.Node) FieldValueSeperatorNode {
+	v := FieldValueSeperatorNode{Node: n}
+	return v
+}
+
+// NewHeaderTargetNode builds a HeaderTargetNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewHeaderTargetNode(n *ts.Node) HeaderTargetNode {
+	v := HeaderTargetNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "name":
+				c := NewFieldNameNode(child)
+				v.Name = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewHttpVersionNode builds a HttpVersionNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewHttpVersionNode(n *ts.Node) HttpVersionNode {
+	v := HttpVersionNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "major":
+				c := NewDigitNode(child)
+				v.Major = &c
+			case "minor":
+				c := NewDigitNode(child)
+				v.Minor = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewIdentifierNode builds a IdentifierNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewIdentifierNode(n *ts.Node) IdentifierNode {
+	v := IdentifierNode{Node: n}
+	return v
+}
+
+// NewIndexAccessNode builds a IndexAccessNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewIndexAccessNode(n *ts.Node) IndexAccessNode {
+	v := IndexAccessNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "index":
+				v.Index = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewInterpolationNode builds a InterpolationNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewInterpolationNode(n *ts.Node) InterpolationNode {
+	v := InterpolationNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "body":
+				c := NewInterpolationBodyNode(child)
+				v.Body = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewInterpolationBodyNode builds a InterpolationBodyNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewInterpolationBodyNode(n *ts.Node) InterpolationBodyNode {
+	v := InterpolationBodyNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "ref":
+				v.Ref = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewJsonLiteralNode builds a JsonLiteralNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewJsonLiteralNode(n *ts.Node) JsonLiteralNode {
+	v := JsonLiteralNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "value":
+				v.Value = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewLetDirectiveNode builds a LetDirectiveNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewLetDirectiveNode(n *ts.Node) LetDirectiveNode {
+	v := LetDirectiveNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "name":
+				c := NewIdentifierNode(child)
+				v.Name = &c
+			case "target":
+				c := NewLetValueNode(child)
+				v.Target = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewLetValueNode builds a LetValueNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewLetValueNode(n *ts.Node) LetValueNode {
+	v := LetValueNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "value":
+				v.Value = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewMemberAccessNode builds a MemberAccessNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewMemberAccessNode(n *ts.Node) MemberAccessNode {
+	v := MemberAccessNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "name":
+				c := NewIdentifierNode(child)
+				v.Name = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewMessageBodyNode builds a MessageBodyNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewMessageBodyNode(n *ts.Node) MessageBodyNode {
+	v := MessageBodyNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "body":
+				v.Body = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewMethodNode builds a MethodNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewMethodNode(n *ts.Node) MethodNode {
+	v := MethodNode{Node: n}
+	return v
+}
+
+// NewMultipartBodyNode builds a MultipartBodyNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewMultipartBodyNode(n *ts.Node) MultipartBodyNode {
+	v := MultipartBodyNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "part":
+				c := NewMultipartPartNode(child)
+				v.Part = append(v.Part, &c)
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewMultipartPartNode builds a MultipartPartNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewMultipartPartNode(n *ts.Node) MultipartPartNode {
+	v := MultipartPartNode{Node: n}
+	return v
+}
+
+// NewNumberNode builds a NumberNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewNumberNode(n *ts.Node) NumberNode {
+	v := NumberNode{Node: n}
+	return v
+}
+
+// NewOctetBodyNode builds a OctetBodyNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewOctetBodyNode(n *ts.Node) OctetBodyNode {
+	v := OctetBodyNode{Node: n}
+	return v
+}
+
+// NewRequestBlockNode builds a RequestBlockNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewRequestBlockNode(n *ts.Node) RequestBlockNode {
+	v := RequestBlockNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "body":
+				c := NewMessageBodyNode(child)
+				v.Body = &c
+			case "directive":
+				c := NewDirectiveLineNode(child)
+				v.Directive = append(v.Directive, &c)
+			case "field_line":
+				c := NewFieldLineNode(child)
+				v.FieldLine = append(v.FieldLine, &c)
+			case "request_line":
+				c := NewRequestLineNode(child)
+				v.RequestLine = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewRequestLineNode builds a RequestLineNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewRequestLineNode(n *ts.Node) RequestLineNode {
+	v := RequestLineNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "method":
+				c := NewMethodNode(child)
+				v.Method = &c
+			case "target":
+				c := NewRequestTargetNode(child)
+				v.Target = &c
+			case "version":
+				c := NewHttpVersionNode(child)
+				v.Version = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewRequestNameNode builds a RequestNameNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewRequestNameNode(n *ts.Node) RequestNameNode {
+	v := RequestNameNode{Node: n}
+	return v
+}
+
+// NewRequestTargetNode builds a RequestTargetNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewRequestTargetNode(n *ts.Node) RequestTargetNode {
+	v := RequestTargetNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "interpolation":
+				c := NewInterpolationNode(child)
+				v.Interpolation = append(v.Interpolation, &c)
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewSaveDirectiveNode builds a SaveDirectiveNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewSaveDirectiveNode(n *ts.Node) SaveDirectiveNode {
+	v := SaveDirectiveNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "name":
+				c := NewIdentifierNode(child)
+				v.Name = &c
+			case "target":
+				c := NewAssertTargetNode(child)
+				v.Target = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewSepratorNode builds a SepratorNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewSepratorNode(n *ts.Node) SepratorNode {
+	v := SepratorNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "name":
+				c := NewRequestNameNode(child)
+				v.Name = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewSourceFileNode builds a SourceFileNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewSourceFileNode(n *ts.Node) SourceFileNode {
+	v := SourceFileNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "block":
+				c := NewRequestBlockNode(child)
+				v.Block = append(v.Block, &c)
+			case "let":
+				c := NewLetDirectiveNode(child)
+				v.Let = append(v.Let, &c)
+			case "seprator":
+				c := NewSepratorNode(child)
+				v.Seprator = append(v.Seprator, &c)
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewStringNode builds a StringNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewStringNode(n *ts.Node) StringNode {
+	v := StringNode{Node: n}
+	return v
+}
+
+// NewUtilReferenceNode builds a UtilReferenceNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewUtilReferenceNode(n *ts.Node) UtilReferenceNode {
+	v := UtilReferenceNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "util_name":
+				c := NewIdentifierNode(child)
+				v.UtilName = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
+// NewValueReferenceNode builds a ValueReferenceNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewValueReferenceNode(n *ts.Node) ValueReferenceNode {
+	v := ValueReferenceNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "accessor":
+				c := NewAccessorNode(child)
+				v.Accessor = append(v.Accessor, &c)
+			case "root":
+				c := NewIdentifierNode(child)
+				v.Root = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
 }
