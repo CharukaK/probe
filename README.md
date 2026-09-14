@@ -123,4 +123,4 @@ The response body follows on stdout, same as the non-verbose run.
 
 ## License
 
-MIT, per `tree-sitter-probe/package.json`. *(No top-level `LICENSE` file yet.)*
+Apache License 2.0, see [`LICENSE`](LICENSE).
