@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Parser for Probe, a text-based API testing DSL built on HTTP syntax (RFC 9110/9112)",
   "repository": "https://github.com/charukak/probe",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": {
     "name": "Charuka Karunanayake",
     "email": "charukakarunanayake@gmail.com"

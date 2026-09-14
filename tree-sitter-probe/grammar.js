@@ -3,7 +3,7 @@
  *       (RFC 9110/9112) with request-file extensions (multi-request files,
  *       multipart shorthand, and more)
  * @author Charuka Karunanayake <charukakarunanayake@gmail.com>
- * @license MIT
+ * @license Apache-2.0
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
