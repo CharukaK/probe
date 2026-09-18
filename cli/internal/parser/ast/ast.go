@@ -43,9 +43,12 @@ const (
 	SaveDirectiveKind       NodeKind = "save_directive"
 	SepratorKind            NodeKind = "seprator"
 	SourceFileKind          NodeKind = "source_file"
+	StartParenthesisKind    NodeKind = "start_parenthesis"
 	StringKind              NodeKind = "string"
+	TargetTextKind          NodeKind = "target_text"
 	UtilReferenceKind       NodeKind = "util_reference"
 	ValueReferenceKind      NodeKind = "value_reference"
+	ValueTextKind           NodeKind = "value_text"
 )
 
 // AccessorNode represents a accessor node.
@@ -116,7 +119,9 @@ type FieldNameNode struct {
 // FieldValueNode represents a field_value node.
 type FieldValueNode struct {
 	*ts.Node
-	Interpolation []*InterpolationNode // field: interpolation
+	Interpolation    []*InterpolationNode    // field: interpolation
+	StartParanthesis []*StartParenthesisNode // field: start_paranthesis
+	Text             []*ValueTextNode        // field: text
 }
 
 // FieldValueSeperatorNode represents a field_value_seperator node.
@@ -242,7 +247,9 @@ type RequestNameNode struct {
 // RequestTargetNode represents a request_target node.
 type RequestTargetNode struct {
 	*ts.Node
-	Interpolation []*InterpolationNode // field: interpolation
+	Interpolation    []*InterpolationNode    // field: interpolation
+	StartParenthesis []*StartParenthesisNode // field: start_parenthesis
+	Text             []*TargetTextNode       // field: text
 }
 
 // SaveDirectiveNode represents a save_directive node.
@@ -266,8 +273,18 @@ type SourceFileNode struct {
 	Seprator []*SepratorNode     // field: seprator
 }
 
+// StartParenthesisNode represents a start_parenthesis node.
+type StartParenthesisNode struct {
+	*ts.Node
+}
+
 // StringNode represents a string node.
 type StringNode struct {
+	*ts.Node
+}
+
+// TargetTextNode represents a target_text node.
+type TargetTextNode struct {
 	*ts.Node
 }
 
@@ -282,6 +299,11 @@ type ValueReferenceNode struct {
 	*ts.Node
 	Accessor []*AccessorNode // field: accessor
 	Root     *IdentifierNode // field: root
+}
+
+// ValueTextNode represents a value_text node.
+type ValueTextNode struct {
+	*ts.Node
 }
 
 // NewAccessorNode builds a AccessorNode by visiting n's direct children once,
@@ -485,6 +507,12 @@ func NewFieldValueNode(n *ts.Node) FieldValueNode {
 			case "interpolation":
 				c := NewInterpolationNode(child)
 				v.Interpolation = append(v.Interpolation, &c)
+			case "start_paranthesis":
+				c := NewStartParenthesisNode(child)
+				v.StartParanthesis = append(v.StartParanthesis, &c)
+			case "text":
+				c := NewValueTextNode(child)
+				v.Text = append(v.Text, &c)
 			}
 			if !cursor.GotoNextSibling() {
 				break
@@ -858,6 +886,12 @@ func NewRequestTargetNode(n *ts.Node) RequestTargetNode {
 			case "interpolation":
 				c := NewInterpolationNode(child)
 				v.Interpolation = append(v.Interpolation, &c)
+			case "start_parenthesis":
+				c := NewStartParenthesisNode(child)
+				v.StartParenthesis = append(v.StartParenthesis, &c)
+			case "text":
+				c := NewTargetTextNode(child)
+				v.Text = append(v.Text, &c)
 			}
 			if !cursor.GotoNextSibling() {
 				break
@@ -942,10 +976,24 @@ func NewSourceFileNode(n *ts.Node) SourceFileNode {
 	return v
 }
 
+// NewStartParenthesisNode builds a StartParenthesisNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewStartParenthesisNode(n *ts.Node) StartParenthesisNode {
+	v := StartParenthesisNode{Node: n}
+	return v
+}
+
 // NewStringNode builds a StringNode by visiting n's direct children once,
 // via a TreeCursor, and routing each into its matching field by name.
 func NewStringNode(n *ts.Node) StringNode {
 	v := StringNode{Node: n}
+	return v
+}
+
+// NewTargetTextNode builds a TargetTextNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewTargetTextNode(n *ts.Node) TargetTextNode {
+	v := TargetTextNode{Node: n}
 	return v
 }
 
@@ -993,5 +1041,12 @@ func NewValueReferenceNode(n *ts.Node) ValueReferenceNode {
 			}
 		}
 	}
+	return v
+}
+
+// NewValueTextNode builds a ValueTextNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewValueTextNode(n *ts.Node) ValueTextNode {
+	v := ValueTextNode{Node: n}
 	return v
 }

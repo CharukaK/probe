@@ -17,7 +17,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 let_directive: multiple leading directives
@@ -44,7 +45,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 let_directive: number literal
@@ -65,7 +67,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 let_directive: boolean and null literals
@@ -90,7 +93,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 let_directive: interpolation value, copying/shadowing another variable
@@ -113,7 +117,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 let_directive: request-scoped, interleaved with @save
@@ -129,7 +134,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)

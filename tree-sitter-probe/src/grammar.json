@@ -135,11 +135,15 @@
       "type": "SYMBOL",
       "name": "_octet_body"
     },
-    "_target_run": {
+    "start_parenthesis": {
+      "type": "STRING",
+      "value": "{"
+    },
+    "target_text": {
       "type": "PATTERN",
       "value": "[!-z|-~]+"
     },
-    "_value_run": {
+    "value_text": {
       "type": "PATTERN",
       "value": "[!-z|-~ \\t]+"
     },
@@ -385,12 +389,20 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "_target_run"
+            "type": "FIELD",
+            "name": "text",
+            "content": {
+              "type": "SYMBOL",
+              "name": "target_text"
+            }
           },
           {
-            "type": "STRING",
-            "value": "{"
+            "type": "FIELD",
+            "name": "start_parenthesis",
+            "content": {
+              "type": "SYMBOL",
+              "name": "start_parenthesis"
+            }
           }
         ]
       }
@@ -413,12 +425,20 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "_value_run"
+            "type": "FIELD",
+            "name": "text",
+            "content": {
+              "type": "SYMBOL",
+              "name": "value_text"
+            }
           },
           {
-            "type": "STRING",
-            "value": "{"
+            "type": "FIELD",
+            "name": "start_paranthesis",
+            "content": {
+              "type": "SYMBOL",
+              "name": "start_parenthesis"
+            }
           }
         ]
       }

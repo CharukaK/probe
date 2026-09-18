@@ -36,9 +36,10 @@ module.exports = grammar({
     identifier: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
     digit: _ => /[0-9]/,
     octet_body: $ => $._octet_body,
+    start_parenthesis: _ => '{',
 
-    _target_run: _ => /[!-z|-~]+/,
-    _value_run: _ => /[!-z|-~ \t]+/,
+    target_text: _ => /[!-z|-~]+/,
+    value_text: _ => /[!-z|-~ \t]+/,
     comparator_operator: _ => choice('==', '<', '<=', '=>', '>', 'contains', 'matches'),
 
     _string_content: _ => token.immediate(prec(1, /[^"\\]+/)),
@@ -71,9 +72,17 @@ module.exports = grammar({
     ),
     request_name: _ => /[ -~]+/,
     method: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    request_target: $ => repeat1(choice(field('interpolation', $.interpolation), $._target_run, '{')), // capture the token
+    request_target: $ => repeat1(choice(
+      field('interpolation', $.interpolation),
+      field('text', $.target_text),
+      field('start_parenthesis', $.start_parenthesis)
+    )), // capture the token
     field_name: _ => /[!#$%&'*+\-.^_`|~0-9A-Za-z]+/,
-    field_value: $ => repeat1(choice(field('interpolation', $.interpolation), $._value_run, '{')),
+    field_value: $ => repeat1(choice(
+      field('interpolation', $.interpolation),
+      field('text', $.value_text),
+      field('start_paranthesis', $.start_parenthesis)
+    )),
     field_value_seperator: _ => ':',
     multipart_part: $ => seq(choice('@field', '@file'), /[^\r\n]*/, $._line_ending),
     multipart_body: $ => repeat1(field('part', $.multipart_part)),

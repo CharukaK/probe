@@ -11,7 +11,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -34,7 +35,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -54,7 +56,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -80,7 +83,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -106,7 +110,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -132,7 +137,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -155,7 +161,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -196,7 +203,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -217,7 +225,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -236,7 +245,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)
@@ -257,7 +267,8 @@ hello world
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))
     directive: (directive_line
@@ -318,7 +329,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     directive: (directive_line
       directive: (save_directive
         name: (identifier)

@@ -11,7 +11,8 @@ hello world
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -30,7 +31,8 @@ line three
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -46,7 +48,8 @@ hello, no trailing newline
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -63,7 +66,8 @@ see ### here
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -81,7 +85,8 @@ more text
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -98,7 +103,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -114,7 +120,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 multipart_body: @field and @file parts
@@ -130,7 +137,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (multipart_body
         part: (multipart_part)
@@ -149,7 +157,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (multipart_body
         part: (multipart_part)))))
@@ -169,7 +178,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (multipart_body
         part: (multipart_part)
@@ -216,6 +226,7 @@ hello
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))

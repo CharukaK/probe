@@ -11,14 +11,16 @@ Host: example.com
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))))
+      value: (field_value
+        text: (value_text)))))
 
 =================================================================
 multiple header fields
@@ -35,22 +37,26 @@ Connection: close
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))
+      value: (field_value
+        text: (value_text)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))
+      value: (field_value
+        text: (value_text)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))))
+      value: (field_value
+        text: (value_text)))))
 
 =================================================================
 field value with internal whitespace runs
@@ -65,14 +71,16 @@ User-Agent: My Client 1.0
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))))
+      value: (field_value
+        text: (value_text)))))
 
 =================================================================
 leading and trailing optional whitespace (OWS) around field value
@@ -87,14 +95,16 @@ Host:    example.com
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))))
+      value: (field_value
+        text: (value_text)))))
 
 =================================================================
 field name with non-alphabetic tchars
@@ -109,14 +119,16 @@ X-My-Header!#$: value
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))))
+      value: (field_value
+        text: (value_text)))))
 
 =================================================================
 header field on a request-line without an HTTP version
@@ -131,11 +143,13 @@ Host: example.com
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     field_line: (field_line
       name: (field_name)
       (field_value_seperator)
-      value: (field_value))))
+      value: (field_value
+        text: (value_text)))))
 
 =================================================================
 whitespace between field name and colon is an error

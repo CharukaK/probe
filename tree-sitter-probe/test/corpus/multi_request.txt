@@ -14,12 +14,14 @@ POST /b
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)))
+      target: (request_target
+        text: (target_text))))
   seprator: (seprator)
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 two request blocks separated by a named ### separator
@@ -37,13 +39,15 @@ POST /b
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)))
+      target: (request_target
+        text: (target_text))))
   seprator: (seprator
     name: (request_name))
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 three request blocks chained with ### separators
@@ -65,17 +69,20 @@ GET /c
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)))
+      target: (request_target
+        text: (target_text))))
   seprator: (seprator)
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)))
+      target: (request_target
+        text: (target_text))))
   seprator: (seprator)
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 leading blank lines before the first request block, no separator needed
@@ -91,7 +98,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 a leading unnamed ### separator before the first request block
@@ -107,7 +115,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 a leading named ### separator before the first request block
@@ -124,7 +133,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 trailing blank lines after the last request block
@@ -139,7 +149,8 @@ GET /
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -156,7 +167,8 @@ GET /b
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))
+      target: (request_target
+        text: (target_text)))
     body: (message_body
       body: (octet_body))))
 
@@ -176,13 +188,15 @@ GET /b
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)))
+      target: (request_target
+        text: (target_text))))
   seprator: (seprator
     name: (request_name))
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target))))
+      target: (request_target
+        text: (target_text)))))
 
 =================================================================
 a dangling ### separator with no request block after it is an error

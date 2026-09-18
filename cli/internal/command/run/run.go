@@ -29,9 +29,13 @@ var RunCmd = &cobra.Command{
 
 		res := parser.Parse(source)
 
-		_, err = plan.FromAst(res.Root, source)
+		p, err := plan.FromAst(res.Root, source)
 		if err != nil {
 			return err
+		}
+
+		for _, v := range p.Steps {
+			fmt.Println(v.Type())
 		}
 
 		return nil

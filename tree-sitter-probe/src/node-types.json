@@ -213,6 +213,26 @@
             "named": true
           }
         ]
+      },
+      "start_paranthesis": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "start_parenthesis",
+            "named": true
+          }
+        ]
+      },
+      "text": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "value_text",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -542,6 +562,26 @@
             "named": true
           }
         ]
+      },
+      "start_parenthesis": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "start_parenthesis",
+            "named": true
+          }
+        ]
+      },
+      "text": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "target_text",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -818,16 +858,24 @@
     "named": true
   },
   {
+    "type": "start_parenthesis",
+    "named": true
+  },
+  {
     "type": "status",
     "named": false
+  },
+  {
+    "type": "target_text",
+    "named": true
   },
   {
     "type": "true",
     "named": false
   },
   {
-    "type": "{",
-    "named": false
+    "type": "value_text",
+    "named": true
   },
   {
     "type": "{{",

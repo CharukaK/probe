@@ -14,7 +14,8 @@ GET {{baseUrl}}/users HTTP/1.1
         interpolation: (interpolation
           body: (interpolation_body
             ref: (value_reference
-              root: (identifier)))))
+              root: (identifier))))
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))))
@@ -56,7 +57,8 @@ X-Request-Id: {{uuid()}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -86,10 +88,12 @@ GET {{scheme}}://{{host}}/a HTTP/1.1
           body: (interpolation_body
             ref: (value_reference
               root: (identifier))))
+        text: (target_text)
         interpolation: (interpolation
           body: (interpolation_body
             ref: (value_reference
-              root: (identifier)))))
+              root: (identifier))))
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))))
@@ -107,7 +111,8 @@ Authorization: Bearer {{token}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -115,6 +120,7 @@ Authorization: Bearer {{token}}
       name: (field_name)
       (field_value_seperator)
       value: (field_value
+        text: (value_text)
         interpolation: (interpolation
           body: (interpolation_body
             ref: (value_reference
@@ -132,7 +138,10 @@ GET /{path}/x HTTP/1.1
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text)
+        start_parenthesis: (start_parenthesis)
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))))
@@ -161,7 +170,8 @@ X: {{base64(value)}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -191,7 +201,8 @@ X: {{hmac_sha256(secret.key, body)}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -227,7 +238,8 @@ X: {{now("iso8601")}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -256,7 +268,8 @@ X: {{now("a\"b")}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -285,7 +298,8 @@ X: {{f(-1.5e10)}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -314,7 +328,8 @@ X: {{hmac_sha256(a , b)}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
@@ -422,7 +437,8 @@ X: {{a.b.c}}
   block: (request_block
     request_line: (request_line
       method: (method)
-      target: (request_target)
+      target: (request_target
+        text: (target_text))
       version: (http_version
         major: (digit)
         minor: (digit)))
