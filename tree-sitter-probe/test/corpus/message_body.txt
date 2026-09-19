@@ -128,8 +128,8 @@ multipart_body: @field and @file parts
 =================================================================
 GET /
 
-@field username alice
-@file avatar ./avatar.png
+@field username = "alice"
+@file avatar = "./avatar.png"
 
 ---
 
@@ -141,15 +141,23 @@ GET /
         text: (target_text)))
     body: (message_body
       body: (multipart_body
-        part: (multipart_part)
-        part: (multipart_part)))))
+        part: (multipart_part
+          (field_part
+            (multipart_field_key)
+            name: (identifier)
+            value: (string)))
+        part: (multipart_part
+          (file_part
+            (multipart_file_key)
+            name: (identifier)
+            path: (quoted_path)))))))
 
 =================================================================
 multipart_body: a single @field part with an empty value
 =================================================================
 GET /
 
-@field
+@field username = ""
 
 ---
 
@@ -161,16 +169,20 @@ GET /
         text: (target_text)))
     body: (message_body
       body: (multipart_body
-        part: (multipart_part)))))
+        part: (multipart_part
+          (field_part
+            (multipart_field_key)
+            name: (identifier)
+            value: (string)))))))
 
 =================================================================
 multipart_body: repeated @file parts
 =================================================================
 GET /
 
-@file a ./a.txt
-@file b ./b.txt
-@file c ./c.txt
+@file a = "./a.txt"
+@file b = "./b.txt"
+@file c = "./c.txt"
 
 ---
 
@@ -182,9 +194,21 @@ GET /
         text: (target_text)))
     body: (message_body
       body: (multipart_body
-        part: (multipart_part)
-        part: (multipart_part)
-        part: (multipart_part)))))
+        part: (multipart_part
+          (file_part
+            (multipart_file_key)
+            name: (identifier)
+            path: (quoted_path)))
+        part: (multipart_part
+          (file_part
+            (multipart_file_key)
+            name: (identifier)
+            path: (quoted_path)))
+        part: (multipart_part
+          (file_part
+            (multipart_file_key)
+            name: (identifier)
+            path: (quoted_path)))))))
 
 =================================================================
 plain body content immediately followed by a boundary marker is unparsed

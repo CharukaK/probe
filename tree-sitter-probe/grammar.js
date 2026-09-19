@@ -52,6 +52,13 @@ module.exports = grammar({
       repeat(choice($._string_content, $._escape_sequence)),
       '"'
     ),
+    // docs/language-spec.md §7.3: DQUOTE *(%x20-21 / %x23-7E) DQUOTE — any
+    // printable char but DQUOTE, no escape sequences (unlike `string`).
+    quoted_path: _ => seq(
+      '"',
+      /[ -!#-~]*/,
+      '"'
+    ),
     number: _ => /-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?/,
     argument: $ => field('value', choice($.value_reference, $.string, $.number)),
     arguments: $ => seq(
@@ -83,8 +90,30 @@ module.exports = grammar({
       field('text', $.value_text),
       field('start_paranthesis', $.start_parenthesis)
     )),
+    multipart_field_key: _ => '@field',
+    multipart_file_key: _ => '@file',
     field_value_seperator: _ => ':',
-    multipart_part: $ => seq(choice('@field', '@file'), /[^\r\n]*/, $._line_ending),
+    // docs/language-spec.md §4.4:
+    //   field-part = "@field" SP identifier SP "=" SP ( string / interpolation )
+    //   file-part  = "@file" SP identifier SP "=" SP quoted-path [ SP "as" SP string ]
+    multipart_part: $ => choice($.field_part, $.file_part),
+    field_part: $ => seq(
+      $.multipart_field_key,
+      repeat1($._wsp),
+      field('name', $.identifier),
+      repeat1($._wsp), '=', repeat1($._wsp),
+      field('value', choice($.string, $.interpolation)),
+      $._line_ending
+    ),
+    file_part: $ => seq(
+      $.multipart_file_key,
+      repeat1($._wsp),
+      field('name', $.identifier),
+      repeat1($._wsp), '=', repeat1($._wsp),
+      field('path', $.quoted_path),
+      optional(seq(repeat1($._wsp), 'as', repeat1($._wsp), field('content_type', $.string))),
+      $._line_ending
+    ),
     multipart_body: $ => repeat1(field('part', $.multipart_part)),
     message_body: $ => field('body', choice($.multipart_body, $.octet_body)),
     // A chain of accessors walking into a value, root-first. This is the

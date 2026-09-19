@@ -29,8 +29,13 @@
 (util_reference ["(" ")"] @punctuation.bracket)
 
 ; Multipart body markers
-"@field" @attribute
-"@file" @attribute
+(multipart_field_key) @attribute
+(multipart_file_key) @attribute
+(field_part name: (identifier) @property)
+(field_part value: (string) @string)
+(file_part name: (identifier) @property)
+(file_part path: (quoted_path) @string)
+(file_part content_type: (string) @string)
 
 ; Raw body content
 (octet_body) @string

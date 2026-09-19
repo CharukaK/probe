@@ -18,8 +18,10 @@ const (
 	DirectiveLineKind       NodeKind = "directive_line"
 	FieldLineKind           NodeKind = "field_line"
 	FieldNameKind           NodeKind = "field_name"
+	FieldPartKind           NodeKind = "field_part"
 	FieldValueKind          NodeKind = "field_value"
 	FieldValueSeperatorKind NodeKind = "field_value_seperator"
+	FilePartKind            NodeKind = "file_part"
 	HeaderTargetKind        NodeKind = "header_target"
 	HttpVersionKind         NodeKind = "http_version"
 	IdentifierKind          NodeKind = "identifier"
@@ -33,9 +35,12 @@ const (
 	MessageBodyKind         NodeKind = "message_body"
 	MethodKind              NodeKind = "method"
 	MultipartBodyKind       NodeKind = "multipart_body"
+	MultipartFieldKeyKind   NodeKind = "multipart_field_key"
+	MultipartFileKeyKind    NodeKind = "multipart_file_key"
 	MultipartPartKind       NodeKind = "multipart_part"
 	NumberKind              NodeKind = "number"
 	OctetBodyKind           NodeKind = "octet_body"
+	QuotedPathKind          NodeKind = "quoted_path"
 	RequestBlockKind        NodeKind = "request_block"
 	RequestLineKind         NodeKind = "request_line"
 	RequestNameKind         NodeKind = "request_name"
@@ -116,6 +121,13 @@ type FieldNameNode struct {
 	*ts.Node
 }
 
+// FieldPartNode represents a field_part node.
+type FieldPartNode struct {
+	*ts.Node
+	Name  *IdentifierNode // field: name
+	Value *ts.Node        // field: value
+}
+
 // FieldValueNode represents a field_value node.
 type FieldValueNode struct {
 	*ts.Node
@@ -127,6 +139,14 @@ type FieldValueNode struct {
 // FieldValueSeperatorNode represents a field_value_seperator node.
 type FieldValueSeperatorNode struct {
 	*ts.Node
+}
+
+// FilePartNode represents a file_part node.
+type FilePartNode struct {
+	*ts.Node
+	ContentType *StringNode     // field: content_type
+	Name        *IdentifierNode // field: name
+	Path        *QuotedPathNode // field: path
 }
 
 // HeaderTargetNode represents a header_target node.
@@ -207,6 +227,16 @@ type MultipartBodyNode struct {
 	Part []*MultipartPartNode // field: part
 }
 
+// MultipartFieldKeyNode represents a multipart_field_key node.
+type MultipartFieldKeyNode struct {
+	*ts.Node
+}
+
+// MultipartFileKeyNode represents a multipart_file_key node.
+type MultipartFileKeyNode struct {
+	*ts.Node
+}
+
 // MultipartPartNode represents a multipart_part node.
 type MultipartPartNode struct {
 	*ts.Node
@@ -219,6 +249,11 @@ type NumberNode struct {
 
 // OctetBodyNode represents a octet_body node.
 type OctetBodyNode struct {
+	*ts.Node
+}
+
+// QuotedPathNode represents a quoted_path node.
+type QuotedPathNode struct {
 	*ts.Node
 }
 
@@ -494,6 +529,30 @@ func NewFieldNameNode(n *ts.Node) FieldNameNode {
 	return v
 }
 
+// NewFieldPartNode builds a FieldPartNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewFieldPartNode(n *ts.Node) FieldPartNode {
+	v := FieldPartNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "name":
+				c := NewIdentifierNode(child)
+				v.Name = &c
+			case "value":
+				v.Value = child
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
+	return v
+}
+
 // NewFieldValueNode builds a FieldValueNode by visiting n's direct children once,
 // via a TreeCursor, and routing each into its matching field by name.
 func NewFieldValueNode(n *ts.Node) FieldValueNode {
@@ -526,6 +585,34 @@ func NewFieldValueNode(n *ts.Node) FieldValueNode {
 // via a TreeCursor, and routing each into its matching field by name.
 func NewFieldValueSeperatorNode(n *ts.Node) FieldValueSeperatorNode {
 	v := FieldValueSeperatorNode{Node: n}
+	return v
+}
+
+// NewFilePartNode builds a FilePartNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewFilePartNode(n *ts.Node) FilePartNode {
+	v := FilePartNode{Node: n}
+	cursor := n.Walk()
+	defer cursor.Close()
+	if cursor.GotoFirstChild() {
+		for {
+			child := cursor.Node()
+			switch cursor.FieldName() {
+			case "content_type":
+				c := NewStringNode(child)
+				v.ContentType = &c
+			case "name":
+				c := NewIdentifierNode(child)
+				v.Name = &c
+			case "path":
+				c := NewQuotedPathNode(child)
+				v.Path = &c
+			}
+			if !cursor.GotoNextSibling() {
+				break
+			}
+		}
+	}
 	return v
 }
 
@@ -786,6 +873,20 @@ func NewMultipartBodyNode(n *ts.Node) MultipartBodyNode {
 	return v
 }
 
+// NewMultipartFieldKeyNode builds a MultipartFieldKeyNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewMultipartFieldKeyNode(n *ts.Node) MultipartFieldKeyNode {
+	v := MultipartFieldKeyNode{Node: n}
+	return v
+}
+
+// NewMultipartFileKeyNode builds a MultipartFileKeyNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewMultipartFileKeyNode(n *ts.Node) MultipartFileKeyNode {
+	v := MultipartFileKeyNode{Node: n}
+	return v
+}
+
 // NewMultipartPartNode builds a MultipartPartNode by visiting n's direct children once,
 // via a TreeCursor, and routing each into its matching field by name.
 func NewMultipartPartNode(n *ts.Node) MultipartPartNode {
@@ -804,6 +905,13 @@ func NewNumberNode(n *ts.Node) NumberNode {
 // via a TreeCursor, and routing each into its matching field by name.
 func NewOctetBodyNode(n *ts.Node) OctetBodyNode {
 	v := OctetBodyNode{Node: n}
+	return v
+}
+
+// NewQuotedPathNode builds a QuotedPathNode by visiting n's direct children once,
+// via a TreeCursor, and routing each into its matching field by name.
+func NewQuotedPathNode(n *ts.Node) QuotedPathNode {
+	v := QuotedPathNode{Node: n}
 	return v
 }
 
