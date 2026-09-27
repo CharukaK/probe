@@ -1,63 +1,168 @@
-# Probe Language Specification (v0.6, Draft)
+# Probe language specification (v0.6, draft)
 
-*This is the formal reference for the `.probe` file format: both its base
-HTTP syntax and its Probe-specific extensions.*
+This document explains the planned `.probe` file format. It starts with the
+parts a new user needs, then keeps the detailed grammar for contributors who
+need it.
 
-Status: **Draft, v1 scope only.** Not yet implemented. Control flow
-(loops/conditionals) is explicitly deferred; see §11.
+The current CLI can parse parts of this format, but it cannot send requests
+or run assertions yet. See the [README](../README.md) for what works today.
 
-**v0.2 changes**: added built-in functions to interpolation (§6), multipart
-/ file-upload bodies (§4.4), teardown blocks (§5), expanded `@assert`
-comparators for length/existence/schema (§7.1), and the `probe.toml` project
-configuration file (§13). These were grammar-affecting gaps
-that had to be resolved before finalizing the Probe-extensions layer.
+## Start here
 
-**v0.3 changes**: `@use ... as <alias>` (§7.3), namespaced imports that close
-a variable-shadowing hole in the flat import model v0.1–v0.2 shipped with
-(two `@use`d dependencies, or a dependency and its importer, saving the same
-identifier would silently overwrite one another with no error).
+A Probe file looks like an HTTP request:
 
-**v0.4 changes**: dropped the standalone `comment-line` (`#`) construct.
-Nothing in the PRD or roadmap ever required it, and `separator` (`###`,
-§3) already carries optional free-form trailing text, so it does the
-labeling/documentation job a `#` comment would have. `separator` is now
-also allowed optionally before a file's first request block, not just
-between blocks, so that first block can carry a label too. `~~~` teardown
-blocks (§5) are unaffected and unchanged.
+```http
+POST https://api.example.com/users
+Content-Type: application/json
 
-**v0.5 changes**: unified interpolation's dotted names and `@assert`'s
-`body.x.y[0]` targets under one `path`/`accessor` grammar (§6), instead of
-treating them as two independent dotted-path mechanisms. `{{alias.name}}`
-is now just the one-`accessor` case of `path`, rather than a special
-single-dot-only form; deeper chains (`{{a.b.c}}`) are syntactically valid
-wherever a `path` is, with resolution failures deferred to execution time
-like any other unresolved reference. `body-target` (§7.1) now reads as
-`path` rooted at `body` instead of restating the same chain grammar under
-`json-key`.
+{"name": "Ada"}
+```
 
-**v0.6 changes**: added `@let` (§7.4), a directive for declaring a local
-constant or copying/shadowing an existing variable without deriving the
-value from a response. This closes the gap `@save`'s response-only
-`assert-target` RHS left for that case. Valid in two positions. Use it as a
-leading file-scoped directive alongside `@use` (§2), or as an ordinary
-request-scoped `directive-line` (§7) that takes effect for everything
-after it, same as a re-`@save`. This removes the §11 non-goal that
-previously pointed generic file-scoped constants at `--env` only.
+Use `###` to put more than one request in a file:
 
-## 1. Notation
+```http
+### Create a user
+POST {{baseUrl}}/users
+Content-Type: application/json
 
-Grammar is given in ABNF ([RFC 5234](https://www.rfc-editor.org/rfc/rfc5234)),
-the same notation [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) uses.
-Core rules (`ALPHA`, `DIGIT`, `VCHAR`, `SP`, `HTAB`, `CRLF`, `OWS`) are as
-defined in RFC 5234 Appendix B.1 and RFC 9110 §5.6.3. Where a production is
-identical to one in RFC 9110, it's referenced by name rather than
-copied, e.g. `method`, `field-name`, `field-value` from RFC 9110 §9, §5.1,
-§5.5.
+{"name": "Ada"}
+
+### Check the user
+GET {{baseUrl}}/users/{{userId}}
+```
+
+The main planned features are:
+
+- `{{value}}` inserts a variable into a request;
+- `@assert` checks a response;
+- `@save` keeps a response value for a later request;
+- `@use` reuses setup requests from another file;
+- `@let` defines a local value;
+- `@file` describes a planned file upload.
+
+These features describe the language design. They are not all implemented in
+the current CLI.
+
+## A complete first file
+
+Start with one request. After the blank line that ends the headers, write the
+body. Put response checks and saved values below the body. A later `###` starts
+the next request.
+
+```http
+### Create a user
+POST https://api.example.com/users
+Content-Type: application/json
+
+{"name": "Ada"}
+
+@assert status == 201
+@save userId = body.id
+
+### Read that user
+GET https://api.example.com/users/{{userId}}
+
+@assert status == 200
+@assert body.name == "Ada"
+```
+
+`{{userId}}` is **interpolation**: Probe replaces it with the value that the
+first request saved. An **assertion** is a response check. A failed assertion
+fails that request, but the file continues with its next request. The precise
+rules, including when values are unavailable, are in §6 and §7.
+
+## More small examples
+
+Check a response and save a value:
+
+```http
+@assert status == 200
+@assert body.token exists
+@save token = body.token
+```
+
+Use the saved value later:
+
+```http
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}
+```
+
+Run a setup file first:
+
+```http
+@use "./login.probe"
+
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}
+```
+
+Use `@let` for a fixed value:
+
+```http
+@let apiVersion = "v2"
+GET {{baseUrl}}/{{apiVersion}}/health
+```
+
+The rest of this document is the detailed syntax reference. Most users can
+start with the examples above and return here only when they need a precise
+rule.
+
+## Detailed reference
+
+The rest is the normative reference for language contributors and for cases
+where the examples are not enough. “Syntax error” means the file is invalid
+before it runs; a “runtime error” happens while resolving or executing a
+valid file. The grammar uses standard HTTP names where possible.
+
+## 1. Status, notation, and version history
+
+**Status: draft, v1 scope only.** This describes the intended language, not a
+claim that every feature is implemented. The CLI currently parses parts of
+it, but cannot yet send requests or run assertions. Control flow (loops and
+conditionals) is deferred; see §11.
+
+Grammar is written in ABNF ([RFC 5234](https://www.rfc-editor.org/rfc/rfc5234)),
+the notation used by [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110).
+Core rules (`ALPHA`, `DIGIT`, `VCHAR`, `SP`, `HTAB`, `CRLF`, `OWS`) have their
+RFC 5234 Appendix B.1 and RFC 9110 §5.6.3 meanings. When a production is
+identical to RFC 9110, this document names it instead of copying it (for
+example, `method`, `field-name`, and `field-value`).
 
 ```abnf
 line-ending = CRLF / LF   ; source files may use either; wire requests are
                           ; normalized to CRLF by the implementation
 ```
+
+Version history records grammar decisions that remain part of this draft:
+
+- **v0.2:** added built-in interpolation functions (§6), multipart/file-upload
+  bodies (§4.4), teardown blocks (§5), expanded `@assert` comparators for
+  length/existence/schema (§7.1), and `probe.toml` project configuration
+  (§13). These grammar-affecting gaps had to be resolved before finalizing
+  the Probe-extensions layer.
+- **v0.3:** added `@use ... as <alias>` (§7.3), namespaced imports that close
+  the variable-shadowing hole in the flat import model v0.1–v0.2 used. Two
+  `@use`d dependencies, or a dependency and its importer, could otherwise
+  save the same identifier and silently overwrite one another.
+- **v0.4:** removed the standalone `comment-line` (`#`) construct. Nothing
+  in the PRD or roadmap required it; `separator` (`###`, §3) already carries
+  free-form trailing text for labels and documentation. A separator may also
+  precede the first request block so that block can have a label. `~~~`
+  teardown blocks (§5) are unaffected and unchanged.
+- **v0.5:** unified interpolation's dotted names and `@assert` targets such
+  as `body.x.y[0]` under one `path`/`accessor` grammar (§6), instead of two
+  independent dotted-path mechanisms. `{{alias.name}}` is the one-accessor
+  case of `path`, not a special single-dot form; deeper chains such as
+  `{{a.b.c}}` are syntactically valid wherever a path is and resolve failures
+  at execution time. `body-target` (§7.1) is a path rooted at `body` rather
+  than a repeated `json-key` chain.
+- **v0.6:** added `@let` (§7.4), which declares a local constant or copies or
+  shadows an existing variable without deriving it from a response. It may be
+  a leading file-scoped directive alongside `@use` (§2), or a request-scoped
+  `directive-line` (§7) that takes effect for everything after it, like a
+  repeated `@save`. This removes the §11 non-goal that previously directed
+  generic file-scoped constants to `--env` only.
 
 ## 2. File structure overview
 
@@ -164,7 +269,7 @@ Standard RFC 9110 framing: a blank line ends the header block; everything
 after it, up to the next `@`-directive line, `###` separator, or EOF, is the
 body. Bodies may contain `{{variable}}` interpolation tokens.
 
-### 4.4 Multipart & file-upload bodies
+### 4.4 Multipart and file-upload bodies
 
 ```abnf
 multipart-body = 1*( multipart-part line-ending )
@@ -240,7 +345,7 @@ Authorization: Bearer {{token}}
 @assert status == 204
 ```
 
-## 6. Variables & interpolation
+## 6. Variables and interpolation
 
 ```abnf
 interpolation = "{{" *SP interp-expr *SP "}}"
@@ -749,11 +854,12 @@ this `probe.toml`'s `[env.<name>]` tables overlap in purpose. This spec doesn't 
 lower-precedence override mechanism (as reflected in §6's resolution order,
 tier 2 vs. tier 3) or is subsumed entirely by `probe.toml`.
 
-## 14. Multi-protocol method classification (proposed)
+## 14. Future protocol ideas
 
-*Status: proposed, from a 2026-08-23 design conversation. Not decided, not
-implemented, and out of the "v1 scope only" line at the top of this
-document; v1 is HTTP-only. Accepting this would extend the grammar past
+This section is only a proposal. It is not part of the current language, is
+not implemented, and is not needed to use Probe. Probe v1 is HTTP-only.
+
+*Original status: proposed, not decided, and outside the v1 scope.* Accepting this would extend the grammar past
 what the PRD's non-goals currently allow (PRD §1.5, §4.3 list WebSocket and
 gRPC support as explicitly out of scope), and it would earn a real version
 bump under §12's rule once it lands, not just this section. Recorded here
