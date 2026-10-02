@@ -1,0 +1,134 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "probe",
+  "rules": {
+    "source_file": {
+      "type": "SYMBOL",
+      "name": "request_line"
+    },
+    "_newline": {
+      "type": "PATTERN",
+      "value": "\\r?\\n"
+    },
+    "request_type": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "GET"
+        },
+        {
+          "type": "STRING",
+          "value": "POST"
+        },
+        {
+          "type": "STRING",
+          "value": "PUT"
+        },
+        {
+          "type": "STRING",
+          "value": "DELETE"
+        },
+        {
+          "type": "STRING",
+          "value": "PATCH"
+        },
+        {
+          "type": "STRING",
+          "value": "HEAD"
+        },
+        {
+          "type": "STRING",
+          "value": "OPTIONS"
+        },
+        {
+          "type": "STRING",
+          "value": "CONNECT"
+        },
+        {
+          "type": "STRING",
+          "value": "TRACE"
+        }
+      ]
+    },
+    "request_target": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "https?:\\/\\/[^\\s]+"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\/[^\\s]*"
+        }
+      ]
+    },
+    "http_version": {
+      "type": "PATTERN",
+      "value": "HTTP\\/\\d+(\\.\\d+)?"
+    },
+    "request_line": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "request_type"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "request_target"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "version",
+              "content": {
+                "type": "SYMBOL",
+                "name": "http_version"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "request": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "request_line",
+          "content": {
+            "type": "SYMBOL",
+            "name": "request_line"
+          }
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}
