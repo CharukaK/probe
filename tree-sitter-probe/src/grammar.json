@@ -3,27 +3,20 @@
   "name": "probe",
   "rules": {
     "source_file": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "REPEAT",
-          "content": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
             "type": "SYMBOL",
             "name": "_newline"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "request"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
+          },
+          {
             "type": "SYMBOL",
-            "name": "_newline"
+            "name": "request"
           }
-        }
-      ]
+        ]
+      }
     },
     "_newline": {
       "type": "PATTERN",

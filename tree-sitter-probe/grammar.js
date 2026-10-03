@@ -12,11 +12,7 @@ export default grammar({
   name: "probe",
 
   rules: {
-    source_file: $ => seq(
-      repeat($._newline),
-      $.request,
-      repeat($._newline)
-    ),
+    source_file: $ => repeat(choice($._newline, $.request)),
     _newline: _ => /\r?\n/,
     request_type: _ => choice("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "CONNECT", "TRACE"),
     request_target: _ => /[^\s]+/,
