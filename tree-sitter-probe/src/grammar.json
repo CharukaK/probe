@@ -3,8 +3,27 @@
   "name": "probe",
   "rules": {
     "source_file": {
-      "type": "SYMBOL",
-      "name": "request_line"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_newline"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "request"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_newline"
+          }
+        }
+      ]
     },
     "_newline": {
       "type": "PATTERN",
@@ -52,17 +71,8 @@
       ]
     },
     "request_target": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "PATTERN",
-          "value": "https?:\\/\\/[^\\s]+"
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\/[^\\s]*"
-        }
-      ]
+      "type": "PATTERN",
+      "value": "[^\\s]+"
     },
     "http_version": {
       "type": "PATTERN",
@@ -115,6 +125,10 @@
             "type": "SYMBOL",
             "name": "request_line"
           }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_newline"
         }
       ]
     }

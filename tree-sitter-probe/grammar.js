@@ -12,10 +12,14 @@ export default grammar({
   name: "probe",
 
   rules: {
-    source_file: $ => $.request_line,
+    source_file: $ => seq(
+      repeat($._newline),
+      $.request,
+      repeat($._newline)
+    ),
     _newline: _ => /\r?\n/,
     request_type: _ => choice("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "CONNECT", "TRACE"),
-    request_target: _ => choice(/https?:\/\/[^\s]+/, /\/[^\s]*/),
+    request_target: _ => /[^\s]+/,
     http_version: _ => /HTTP\/\d+(\.\d+)?/,
     request_line: $ => seq(
       field('type', $.request_type),
@@ -23,7 +27,8 @@ export default grammar({
       optional(field('version', $.http_version))
     ),
     request: $ => seq(
-      field('request_line', $.request_line)
+      field('request_line', $.request_line),
+      $._newline
     )
   }
 });

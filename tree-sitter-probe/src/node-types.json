@@ -1,5 +1,21 @@
 [
   {
+    "type": "request",
+    "named": true,
+    "fields": {
+      "request_line": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "request_line",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "request_line",
     "named": true,
     "fields": {
@@ -36,11 +52,6 @@
     }
   },
   {
-    "type": "request_target",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "request_type",
     "named": true,
     "fields": {}
@@ -55,7 +66,7 @@
       "required": true,
       "types": [
         {
-          "type": "request_line",
+          "type": "request",
           "named": true
         }
       ]
@@ -99,6 +110,10 @@
   },
   {
     "type": "http_version",
+    "named": true
+  },
+  {
+    "type": "request_target",
     "named": true
   }
 ]
