@@ -1,0 +1,134 @@
+==================
+Empty source
+==================
+
+---
+
+(source_file)
+
+==================
+Request without HTTP version
+==================
+GET /users
+
+---
+
+(source_file
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target))))
+
+==================
+CRLF request
+==================
+GET /windows
+
+---
+
+(source_file
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target))))
+
+==================
+Request with HTTP version
+==================
+POST https://example.com/users?active=true HTTP/1.1
+
+---
+
+(source_file
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)
+      version: (http_version))))
+
+==================
+Every request method
+==================
+GET /get
+POST /post
+PUT /put
+DELETE /delete
+PATCH /patch
+HEAD /head
+OPTIONS /options
+CONNECT /connect
+TRACE /trace
+
+---
+
+(source_file
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target))))
+
+==================
+Multiple requests and blank lines
+==================
+
+GET /one HTTP/2
+
+
+POST /two HTTP/2.0
+
+---
+
+(source_file
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)
+      version: (http_version)))
+  (request
+    request_line: (request_line
+      type: (request_type)
+      target: (request_target)
+      version: (http_version))))
+
+==================
+Missing request target
+==================
+GET
+
+---
+
+(source_file
+  (ERROR
+    (request_type)))
